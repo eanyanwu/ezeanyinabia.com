@@ -1,0 +1,9 @@
+- name: About
+  link: /
+  id: about-tab
+- name: Links
+  link: /links.html
+  id: quick-links-tab
+- name: Faq
+  link: /faq.html
+  id: faq-tab
