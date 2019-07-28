@@ -7,3 +7,6 @@
 - name: Faq
   link: /faq.html
   id: faq-tab
+- name: Wiki
+  link: /wiki.html
+  id: wiki-tab
