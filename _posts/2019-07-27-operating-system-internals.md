@@ -1,11 +1,11 @@
 ---
 layout: post
-title: Operating System Internals
+title: Operating system internals
 excerpt_separator: <!--more-->
 ---
 
-Since I spend a lot of time using computers, I feel morally obligated to learn about how they work.  
-These are notes from following along with the <a class="txt-link" href="http://pages.cs.wisc.edu/~remzi/OSTEP/">Operating Systems: Three Easy Pieces</a> book offered by Computer Science professors at the University of Wisconsin-Madison
+I spend a lot of time using computers, but I'm frankly still scared of what goes on beneath the covers.  
+To change that, I am following along with the free <a class="txt-link" href="http://pages.cs.wisc.edu/~remzi/OSTEP/">Operating Systems: Three Easy Pieces</a> book offered by Computer Science professors at the University of Wisconsin-Madison
 
 <!--more-->
 
@@ -14,10 +14,13 @@ These are notes from following along with the <a class="txt-link" href="http://p
 1. [Virtualization](#virtualization)
     1. [Virtualizing The CPU](#virtualizing-the-cpu)
         1. [Mechanisms And Policies](#mechanisms-and-policies)
-            1. [Mechanism: Process Creation](#process-creation)
-            1. [Mechanism: Limited Direct Execution](#limited-direct-execution)
-            1. [Policy: Scheduling](#scheduling)
+            1. [Process Creation](#mechanism-process-creation)
+            1. [Limited Direct Execution](#mechanism-limited-direct-execution)
+            1. [Scheduling](#policy-scheduling)
     1. [Virtualizing Memory](#virtualizing-memory)
+        1. [Mechanisms And Policies](#mechanisms-and-policies)
+            1. [Memory Allocation Api](#mechanism-memory-allocation-api)
+            1. [Address Translation](#mechanism-address-translation)
 1. [Concurrency](#concurrency)
 1. [Persistence](#persistence)
 
@@ -74,8 +77,8 @@ OS do that?
 
 ### Mechanisms and Policies
 
-Mechanism are low-level operations, methods or protocols to implement a needed
-piece of functionality. They represent _How_ to do somthing.
+Mechanisms are low-level operations, methods or protocols to implement a needed
+piece of functionality. They represent the step-by-step details of how to do somthing.
 
 Policies are the algorithms for making some kind of decision. For example, deciding
 which process to run next.
@@ -97,7 +100,7 @@ processes that are running, ready or blocked. The individual members in this
 list are sometimes called PCBs (process control blocks) or process descriptors.
 
 
-#### Process Creation 
+#### Mechanism: Process Creation 
 
 To have multiple processes running on the same computer, the operating system must be able to _create_ them. These is the main Application Programming Interface for process creation:
 
@@ -108,7 +111,7 @@ To have multiple processes running on the same computer, the operating system mu
 - `exec()` -> Load another program into the current running program's address space and start executing that instead.
 
 
-#### Limited Direct Execution 
+#### Mechanism: Limited Direct Execution 
 
 When a process is running on the CPU, nothing else else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?
 
@@ -125,19 +128,19 @@ The elements of this are:
     - Once the next process to be executed has been chosen, a context switch needs to happen. This means saving some state form the current running process, and fetching some state for the soon to be running process. Then return from trap my guy.
 
 
-#### Scheduling
+#### Policy: Scheduling
 
 Some Definitions:
 
-_Turnaround Time:_ The time from when the job entered the system to when it completes
+> Turnaround Time: The time from when the job entered the system to when it completes
 
-_Response Time:_ The time from when the job enters the system to when it first starts executing.
+> Response Time: The time from when the job enters the system to when it first starts executing.
 
 Different scheduling policies yield different results for these two metrics. In general, policies that are considered "fair" are terrible for turnaround time but good for response time. 
 
 Polcies that are considered "efficient" are great at turnaround time, but terrible at response time. 
 
-**Multi-Level-Feedback Queue Scheduler**
+_Multi-Level-Feedback Queue Scheduler_
 
 The crux of the problem: "How can we design a scheduler that both minimizes response time for interactive jobs while also minimizing turnaround time without previous knowledge of job length?
 
@@ -157,7 +160,7 @@ The Pros:
 The Cons:
 - Voo-doo constants (term was created by John Ousterhout). What values should we pick for a time-slice for each queue? How many queues should we have? What should be the time allotment per-queue? What is the period `S` after which all jobs in the system move to the topmost queue? The questions go on...
 
-**Lottery Shcheduling**
+_Lottery Shcheduling_
 
 Exaclty what it sounds like. We pick the next process to run at random with the added twist that we can assign "weights" to certain processes so they are more likely to be picked.
 
@@ -189,3 +192,23 @@ It would also be terrible if other programs could overwrite your own memory.
 In the early days of computing, this didn't matter much. Computers only needed to only run a few jobs non-interactively. But humans are demanding and eventually we wanted our computers to be interactive! we wanted them fast and capable of running multiple programs at the same time! and they must support multiple concurrent users! `.__.` So OS designers had no choice. Virtual memory it is. Gone are the simple days
 
 
+### Mechanisms and Policies
+
+#### Mechanism: Memory Allocation Api
+
+Generally, when running a program, there are two types of memory "stack" and "heap". The underlying operating system does not make this distinction. It's all just memory.   
+However most programming languages introduce this concept to make a distinction between short-lived and long-lived memory.
+
+Short-lived memory or stack memory only lasts within a function call.  
+Long-lived memory or heap memory can last between function invocations.
+
+Stack memory is usually automatically allocated AND de-allocated for you. Heap memory however, you need to take care of yourself.
+
+In UNIX/C programs, two methods are available for allocating heap memory
+
+- `malloc` -> You pass it the size of memory you would like allocated on the heap. If it succeeds, it returns the pointer to that memory
+- `free` -> Marks the memory pointed to the pointer argument as free to used again i.e. not-allocated
+
+These are not system calls. They are provided by the C standard library as easier interfaces to the `brk` and `sbrk` system calls.
+
+#### Mechanism: Address Translation

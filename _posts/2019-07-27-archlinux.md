@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Arch Linux
+title: Archlinux
 excerpt_separator: <!--more-->
 ---
 
