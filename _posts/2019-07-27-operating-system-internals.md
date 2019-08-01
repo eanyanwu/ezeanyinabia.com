@@ -212,3 +212,16 @@ In UNIX/C programs, two methods are available for allocating heap memory
 These are not system calls. They are provided by the C standard library as easier interfaces to the `brk` and `sbrk` system calls.
 
 #### Mechanism: Address Translation
+
+The idea is the same with limited directed execution. The operating must partner with the hardware to be able to provide a good memory interface to programs. 
+
+Specifically, running programs are made to think they have a continuous chunk of memory starting at 0 which they can use. Perhaps unsurprisingly, this is not actually the case.  
+
+If multiple programs are to share memory, the OS needs to be able to place them at different spots in memory, which means the addresses the programs use will be wrong. To fix this issue, the OS uses _address translation_ or _base and bounds_.  
+
+The idea is that the running program thinks it is accessing address 128 to get its next instruction. However, the next instruction for that program might not be at physcal address 128 because of where the program was placed in memory. So the Operating System with great help from the hardware translates that 128 virtual address its physical address.  
+
+This is done by recording a base and bounds for every program. We can think of the _base_ as the offset from 0 to where the program actually resides in memory. So when a program whose base is 10000 tries to access memory location 128, the hardware will actually translate that to the physical memory location 10128. 
+The _bounds_ helps enforce the rule that processes can only access their own memory. If a process tries to access memory greater than the _bounds_, the hardware can run a handler (set up by the OS) that will kill the offending process.
+
+
