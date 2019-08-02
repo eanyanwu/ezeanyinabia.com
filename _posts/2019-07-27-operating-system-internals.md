@@ -21,6 +21,7 @@ To change that, I am following along with the free <a class="txt-link" href="htt
         1. [Mechanisms And Policies](#mechanisms-and-policies)
             1. [Memory Allocation Api](#mechanism-memory-allocation-api)
             1. [Address Translation](#mechanism-address-translation)
+            1. [Segmentation](#mechanism-segmentation)
 1. [Concurrency](#concurrency)
 1. [Persistence](#persistence)
 
@@ -224,4 +225,13 @@ The idea is that the running program thinks it is accessing address 128 to get i
 This is done by recording a base and bounds for every program. We can think of the _base_ as the offset from 0 to where the program actually resides in memory. So when a program whose base is 10000 tries to access memory location 128, the hardware will actually translate that to the physical memory location 10128. 
 The _bounds_ helps enforce the rule that processes can only access their own memory. If a process tries to access memory greater than the _bounds_, the hardware can run a handler (set up by the OS) that will kill the offending process.
 
+#### Mechanism: Segmentation
+
+If programmers were content creatures, we would be be content with having _base_ and _bounds_ registers. But nooo. we must have more flexibility. We can't simply give each process a physical block of continuous address space! We need to be able to partition it and place its parts wherever we want, so we can be more memory-efficient and avoid wasted space!
+
+And that is what happened and they called it "segmentation" and it added a few more registers to mark where different segments started, stopped and the direction in which they grew.
+
+<p><i>smh</i> •`_´•</p>
+
+This is also the origin of the "segmentation fault" error we see in programs. It happens when we try to access memory in a segment that does not belong to us.
 
