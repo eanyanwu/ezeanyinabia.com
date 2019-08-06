@@ -22,6 +22,7 @@ To change that, I am following along with the free <a class="txt-link" href="htt
             1. [Memory Allocation Api](#mechanism-memory-allocation-api)
             1. [Address Translation](#mechanism-address-translation)
             1. [Segmentation](#mechanism-segmentation)
+            1. [Free Memory Management](#free-memory-management)
 1. [Concurrency](#concurrency)
 1. [Persistence](#persistence)
 
@@ -231,7 +232,18 @@ If programmers were content creatures, we would be be content with having _base_
 
 And that is what happened and they called it "segmentation" and it added a few more registers to mark where different segments started, stopped and the direction in which they grew.
 
-<p><i>smh</i> •`_´•</p>
-
 This is also the origin of the "segmentation fault" error we see in programs. It happens when we try to access memory in a segment that does not belong to us.
+
+
+#### Free Memory Management
+
+Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques fore keeping track of free space. 
+
+In managing free space, there are a few considerations.
+1. What is the interface we will presenting to the user? e.g. what is the process through which they can request memory? If the user is finished using a chunk of memory, is there a way they can signal that they don't need said chunk any longer? If so, how?
+1. How will we map virtual addresses to physical ones?
+1. How will we implement coalescing and splitting? 
+    - __Splitting__: When a user requests some free space, the allocator will find some chunk that can satisfy the request. It will break this chunk into two. The first part will be returned back to the caller and the second will be placed back into the free list. 
+    - __Coalescing__: If a user no longer has need for a chunk of memory, the allocator should make sure to store neighboring chunks of memory as one big chunk instead of separate ones.
+    - These two techniques help to minimize _external fragmentation_ -- when free space gets chopped up into little pieces subsequent requests might fail to find one continuous chunk of memory that satisfies the demand.
 
