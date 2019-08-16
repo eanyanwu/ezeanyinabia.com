@@ -20,6 +20,7 @@ title: Wiki
             <h3>
                 <a class="txt-link" href="{{ post.url }}">{{ post.title }}</a>
             </h3>
+            <p class="i f6" >Started {{ post.date | date_to_string: "ordinal", "US"}}</p>
             <p class="measure-wide">
                 {{ post.excerpt }}
             </p>
