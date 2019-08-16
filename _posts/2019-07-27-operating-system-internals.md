@@ -23,6 +23,7 @@ To change that, I am following along with the free <a class="txt-link" href="htt
             1. [Address Translation](#mechanism-address-translation)
             1. [Segmentation](#mechanism-segmentation)
             1. [Free Memory Management](#free-memory-management)
+            1. [Paging](#mechanism-paging)
 1. [Concurrency](#concurrency)
 1. [Persistence](#persistence)
 
@@ -185,7 +186,7 @@ As each process runs, it accumulates vruntime. Once a time-slice is over, the sc
 ## Virtualizing Memory 
 
 
-We are not yet done with vitualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving proceses the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.
+We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving proceses the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.
 
 This goal of this illusion is _easy of use_ and _protection_.   
 It would be terrible to program in an environment where you needed to make sure you didn't overwrite some other program's memory.  
@@ -246,4 +247,22 @@ In managing free space, there are a few considerations.
     - __Splitting__: When a user requests some free space, the allocator will find some chunk that can satisfy the request. It will break this chunk into two. The first part will be returned back to the caller and the second will be placed back into the free list. 
     - __Coalescing__: If a user no longer has need for a chunk of memory, the allocator should make sure to store neighboring chunks of memory as one big chunk instead of separate ones.
     - These two techniques help to minimize _external fragmentation_ -- when free space gets chopped up into little pieces subsequent requests might fail to find one continuous chunk of memory that satisfies the demand.
+
+#### Mechanism: Paging
+With segmentation, we chop up free space into different size chunks using different policies to manage the fragmentation that occurs.  
+Thankfully, not all computer scientists went crazy with using segmentation. We have mostly moved to using a different mechanism for managing memory -- paging. This is a much simpler technique where memory is represented as fixed-size chunks (or pages). In the context of physical memory, we use the term _page frames_. In the context of virtual memory (process address space), we use the term _virtual pages_, or just _pages_.
+
+For this to work, each process needs to have a _page table_ ~ a mapping from virtual pages to physical ones. To translate a virtual address to a physical one, we split the address into two parts: a virtual page number (VPN) and an offset. The vpn lets us know what virtual page the memory address is in and the offset is...well, the offset into that virtual page.   
+This works well because given a continuous process address space, we can designate a portion of a the higher-order bits to represent the page number. As we move throughout the address space the page number/offset works because higher order bits get incremented slower than lower order bits, and when they do, the lower order bits "reset" to zero. This works both in binary and decimal. Food for thought. 
+
+So the page table is really just a data structure for mapping virtual page numbers to physical page numbers. In practice, we use it to store some other information about pages though:
+- Valid bit: To support sparse address spaces, we can mark pages in a process address space as invalid if it is not currently being used. This allows the OS to avoid allocating physical page frames for those regions.
+- Protection bits: To support read/write/execute access for the contents of a page.
+- Present bit: Indicates whether this page is in memory or disk (will be talked about later)
+- Dirty bit: Indicates if the page has been modified since being brought into memory.
+... many more.
+
+When you really think about it though, you realize that page tables can get big. We can no longer store the values we need to translate addresses in registers, we have to use memory. The huge downside to this is that every memory access incurs more costs than usual because we have to make an additional fetch to get the page table from memory. More fetches might be necessary depending on how things are setup.
+
+Nevertheless, i'm still a much bigger fan of paging that segmentation. It seems much "saner", the right thing to do.
 
