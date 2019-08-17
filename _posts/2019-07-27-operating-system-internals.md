@@ -24,6 +24,7 @@ To change that, I am following along with the free <a class="txt-link" href="htt
             1. [Segmentation](#mechanism-segmentation)
             1. [Free Memory Management](#free-memory-management)
             1. [Paging](#mechanism-paging)
+            1. [Translation Lookaside Buffers](#translation-lookaside-buffers)
 1. [Concurrency](#concurrency)
 1. [Persistence](#persistence)
 
@@ -266,3 +267,16 @@ When you really think about it though, you realize that page tables can get big.
 
 Nevertheless, i'm still a much bigger fan of paging that segmentation. It seems much "saner", the right thing to do.
 
+#### Translation Lookaside Buffers
+
+Paging on its own is slow because memory access is costly (relative to the cpu speed). So for paging to be practical, we need to find a way to deal with the page-table access penalty we get. 
+
+One of such ways is using an Address Translation Cache (for historical? reasons, it is called a Translation Lookaside Buffer). This will be a small, but fast area close to the cpu that will be used to store recent page table translations.  
+The first time a procss tries to translate a virtual page table to a physical one, we will have a _TLB miss_ because the translation is not in the cache yet. So we grit our teeth, and fetch the page table from memory as usual. We then add that translation to the TLB. On subsequent requests to translate that page table, its a _TLB hit_ because the translation exists in cache.
+
+This mechanism works quite well because of spatial locality (if a process accesses a memory location, it is likely to access nearby memory locations) and temporal locality (if a process accesses a memory location, it is likely to access it again in the near future).
+Loading a page table translation into the TLB means that subsequent address translation that fit within that page table will be TLB hits and thus fast. WIN.
+
+If it's easy, you're missing something. That's my new motto for Operating System things. Speaking of which, we are missing something. Context switches. Since each process has its own page table, processes can't share the TLB. UGH. There are a few ways to deal with this. One is to flush the TLB on a context switch, so that each process starts with a fresh TLB. The downside of this is that each process starts with a fresh TLB, so all the caching work just goes down the drain. Another approach is to allow multiple processes to use the TLB, but differentiate which entry belongs to which process by using an "Address Space Identifier" or ASI. The downside of this is that processes need to share the already small TLB, so even fewer translations can be cached.
+
+Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequenty translations will still need to be saved. How do we decide which entry to evict? TBD. 
