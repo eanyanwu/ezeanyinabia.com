@@ -42,7 +42,10 @@ Manging my passwords on my own solves the attack target problem. As long as I do
 One of the really nice things about 1Password was the browser extensions that allowed to automatically insert credentials. `pass` doesn't come with anything of the sort. 
 Thankfully, creating system to do the same thing is not that hard. The creator of `pass` has his version of it called [passmenu](https://git.zx2c4.com/password-store/tree/contrib/dmenu), which is where I got the inspiration. 
 
-[This](https://github.com/eanyanwu/.dotfiles/blob/master/scripts/passmenu.sh) is my version of the script.
+[This](https://github.com/eanyanwu/.dotfiles/blob/master/scripts/passmenu.sh) is my version of the script. Don't you worry, it's well commented :)
+
+The last step to get this all working is to get a graphical version of the _pinentry_ program. From what I understand, _pinentry_ is the program that runs whevere a password-protected gpg key is accessed. The default version usually runs in the terminal where the key was accessed. This won't do for our situation because the script won't be running in a terminal.  
+So we need a version of pinentry that will pop open a window instead of drawing to the terminal. For OpenBSD, I was able to find a gtk version that I installed using `pkg_add`. Once it was intalled, gpg somehow automatically defaulted to using the graphical version, so no further configuration was required.
 
 
 ## Syncing the passwords between devices
