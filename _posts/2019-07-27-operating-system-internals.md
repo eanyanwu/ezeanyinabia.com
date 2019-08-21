@@ -25,6 +25,7 @@ To change that, I am following along with the free <a class="txt-link" href="htt
             1. [Free Memory Management](#free-memory-management)
             1. [Paging](#mechanism-paging)
             1. [Translation Lookaside Buffers](#translation-lookaside-buffers)
+            1. [Advanced Paging](#advanced-paging)
 1. [Concurrency](#concurrency)
 1. [Persistence](#persistence)
 
@@ -239,7 +240,7 @@ This is also the origin of the "segmentation fault" error we see in programs. It
 
 #### Free Memory Management
 
-Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques fore keeping track of free space. 
+Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques for keeping track of free space. 
 
 In managing free space, there are a few considerations.
 1. What is the interface we will presenting to the user? e.g. what is the process through which they can request memory? If the user is finished using a chunk of memory, is there a way they can signal that they don't need said chunk any longer? If so, how?
@@ -263,7 +264,7 @@ So the page table is really just a data structure for mapping virtual page numbe
 - Dirty bit: Indicates if the page has been modified since being brought into memory.
 ... many more.
 
-When you really think about it though, you realize that page tables can get big. We can no longer store the values we need to translate addresses in registers, we have to use memory. The huge downside to this is that every memory access incurs more costs than usual because we have to make an additional fetch to get the page table from memory. More fetches might be necessary depending on how things are setup.
+When you really think about it though, you realize that page tables can get big. We can no longer store the values we need to translate addresses in registers, we have to use memory. Another pretty big downside to this is that every memory access incurs more costs than usual because we have to make an additional fetch to get the page table from memory. More fetches might be necessary depending on how things are setup.
 
 Nevertheless, i'm still a much bigger fan of paging that segmentation. It seems much "saner", the right thing to do.
 
@@ -280,3 +281,24 @@ Loading a page table translation into the TLB means that subsequent address tran
 If it's easy, you're missing something. That's my new motto for Operating System things. Speaking of which, we are missing something. Context switches. Since each process has its own page table, processes can't share the TLB. UGH. There are a few ways to deal with this. One is to flush the TLB on a context switch, so that each process starts with a fresh TLB. The downside of this is that each process starts with a fresh TLB, so all the caching work just goes down the drain. Another approach is to allow multiple processes to use the TLB, but differentiate which entry belongs to which process by using an "Address Space Identifier" or ASI. The downside of this is that processes need to share the already small TLB, so even fewer translations can be cached.
 
 Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequenty translations will still need to be saved. How do we decide which entry to evict? TBD. 
+
+#### Advanced Paging
+
+Don't let the word "advanced" scare you off. Stay. It's "fun".   
+Anyways, the previous section on the TLB was about how we can avoid the expensive additional calls to memory when using the paging technique for memory virtualization (yes, this is still about memory virtualization. See the hole we've dug ourselves?).
+
+If you recall, paging actually had two problems. We addressed the first one ~ we reduce the number of calls to memory by introducing caching. But we have yet to address the second one: Page tables get big.
+
+Page tables get big because we need a page table entry for each page within a process address space, whether it is being used by the process or not. Lots of wasted space.  
+One way to reduce the space taken up by the page table is to increase the page size. This means less pages, which means less entries, which means smaller page table! Yay? _Let's not get to hasty, my simple-minded friend._
+Bigger page sizes now means that a process might be given more memory that it needs. This leads to "internal fragmentation" ~ applications end up allocating pages but only using small bits and pieces of each, filling up memory with barely used areas.  
+
+
+Out of the many other solutions, I'll just point out three, because if you _really_ think about it, this isn't a textbook, but notes about one.
+- Hybrid between segmentation and paging: Honestly, I don't fully understand this one, neither do I care about it. I'm morally against segmentation. Pass.
+- Multi-Level Page Tables: Instead of having one page table, you have a hierarchical  structure of tables. The base case is our normal page table. You have a normal table that tells you, for each page, whether it is allocated or not. If it is allocated it will also tell you what the physical page frame is. For your average process, only a small part of the entries in this page table will be pointing to actual physical frames. The rest only exist to tell you they are not pointing to anything. 
+A 2-Level page table solves that a bit, by breaking up this initial page table (call it A) into equally-sized chunks that are then pointed to by another table (call it B).The twist is that if all the page table entries in a chunk of table A don't point to anything, we can ommit that chunk from A and simply have the corresponding entry in B mark it as unallocated. Savings. This "trick" can be repeated as many times as needed, hence "Multi-Level" page tables.  
+It's important to understand that we've traded space for complexity though. We solved the space problem, but now we have a complexity problem. These types of tradeoffs show up all over operating system design, and usually people are willing to take on complexity to save on some space or performance. I'm not happy about it, but I guess we have to make do with what we have.  
+- Inverse Page Table: This one surprised me. The idea is to say NO to per-process page tables. We will have one big page table for all the processes. Instead of listing a mapping from a virtual page number to a physical page number, it will do the opposite: list a mapping from every physical page frame number to whatever virtual page number points to it. With this approach, the data structure used becomes really important since our table can't be a normal list. Think about how you would find what physical page frame number corresponds to your virtual page number. Every page table access would require checking the table sequentially. Except it is a huge table because it has as many entries as there are pages in the system's memory. So this cannot be a list, but needs to be some other well thought through data structure.
+
+
