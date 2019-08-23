@@ -26,6 +26,7 @@ To change that, I am following along with the free <a class="txt-link" href="htt
             1. [Paging](#mechanism-paging)
             1. [Translation Lookaside Buffers](#translation-lookaside-buffers)
             1. [Advanced Paging](#advanced-paging)
+            1. [Swap Space](#swap-space)
 1. [Concurrency](#concurrency)
 1. [Persistence](#persistence)
 
@@ -301,4 +302,14 @@ A 2-Level page table solves that a bit, by breaking up this initial page table (
 It's important to understand that we've traded space for complexity though. We solved the space problem, but now we have a complexity problem. These types of tradeoffs show up all over operating system design, and usually people are willing to take on complexity to save on some space or performance. I'm not happy about it, but I guess we have to make do with what we have.  
 - Inverse Page Table: This one surprised me. The idea is to say NO to per-process page tables. We will have one big page table for all the processes. Instead of listing a mapping from a virtual page number to a physical page number, it will do the opposite: list a mapping from every physical page frame number to whatever virtual page number points to it. With this approach, the data structure used becomes really important since our table can't be a normal list. Think about how you would find what physical page frame number corresponds to your virtual page number. Every page table access would require checking the table sequentially. Except it is a huge table because it has as many entries as there are pages in the system's memory. So this cannot be a list, but needs to be some other well thought through data structure.
 
+#### Swap space
 
+Recall that one of the reasons virtualization exists in the first place is to give the illusion that interacting with the hardware is easier that it actually is. This is a good thing. Yet another thing we need to figure out to make such an illusion seamless is address the case when a process needs an address space greater than what can fit into memory. 
+
+Thankfully, this magic is not all that complicated. We have a small, but fast TLB (address translation cache). We have a bigger but slower memory (RAM). Now it's time to introduce the much bigger, but much slower "disk". This could be a hard drive (HD) or a solid state drive (SSD). It's big, permanent and slow storage. If there is no space in memory to fit an address space, and THE SHOW MUST GO ON, we have no option but to start throwing address spaces onto disk.  
+
+This process of _swapping pages from memory to disk and vice versa_ is controlled by the _present bit_ in a process's page table. The bit will tell us if that page is present in memory or not. 
+This process must be done carefully though. If memory is full, we need a way to choose which pages to move to disk. Ideally, these would be pages that are not frequently accessed. 
+
+The act of moving pages in and out of swap space is done by the _swap daemon_ or _page daemon_. This is a special process the operating system will run when it notices that there are fewer than a certain number of pages in memory. This "certain number" is called the "Low Watermark".
+The special process will run until there are at least another certain number of pages in memory. This "another certain number" is called the "High Watermark".
