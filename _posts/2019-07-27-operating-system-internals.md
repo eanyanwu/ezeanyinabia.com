@@ -46,14 +46,14 @@ The body of software that allows us to interact with our laptops in the way we d
 the operating system. 
 It enables multiple programs to run seemingly at the same time -- giving us the desktop "environment" we are used to. 
 
-As I am writing this in a text editor, my browser is open to the page contining this
+As I am writing this in a text editor, my browser is open to the page containing this
 lesson, music is playing from another tab on the browser, I have a status bar on the
 bottom showing the time, volume, date, battery, and wifi status. I also
 have another workspace with a terminal window open. None of this would be
 possible without the wild wild things the operating system does behind the scenes
 while programs are seemingly just fetching, decoding and executing instructions.
 
-So how does an operating system (or OS) do this magic? Three easy pieces; virtualization, concurency and persistence.
+So how does an operating system (or OS) do this magic? Three easy pieces; virtualization, concurrency and persistence.
 
 
 # Virtualization 
@@ -96,11 +96,11 @@ of a running process. Some examples are
 - The registers it makes use of. 
 - The files it has open
 
-__Process API__: The way you expect to be able ot interact with a process. For
+__Process API__: The way you expect to be able to interact with a process. For
 example, we should be able to create, destroy, and wait for a process. Other
 operations might also be possible. 
 
-__Process List__: Data struction that the OS uses to track information about
+__Process List__: Data structure that the OS uses to track information about
 processes that are running, ready or blocked. The individual members in this
 list are sometimes called PCBs (process control blocks) or process descriptors.
 
@@ -118,12 +118,12 @@ To have multiple processes running on the same computer, the operating system mu
 
 #### Mechanism: Limited Direct Execution 
 
-When a process is running on the CPU, nothing else else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?
+When a process is running on the CPU, nothing else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?
 
 A mechanism called Limited Direct Execution is used.
 The elements of this are:
 - Trap instructions.
-    - These trap instructions give control to the hardware, which in turn gives control to the OS with additional priviledges (kernel mode). The OS does its thing, then executes a return from trap instruction, which gives control back to the hardware, which in turn gives control back to the running program.
+    - These trap instructions give control to the hardware, which in turn gives control to the OS with additional privileges (kernel mode). The OS does its thing, then executes a return from trap instruction, which gives control back to the hardware, which in turn gives control back to the running program.
     - Normal prgrams can pass arguments to these trap instructions by placing values on the stack that are understood by the OS.
     - These are called "System Calls"
 - Switching control between process:
@@ -155,7 +155,7 @@ Here are the rules:
 1. If Priority(A) > Priority(B), A runs (B doesn’t)
 1. If Priority(A) = Priority(B), A & B run in round-robin fashion using the time slice of the given queue.
 1. When a job enters the system, it is placed at the highest priority (the topmost queue).
-1. Once a job uses up its time allotment at a given level (re-gardless of how many times it has given up the CPU), its priority is reduced (i.e., it moves down one queue).
+1. Once a job uses up its time allotment at a given level (regardless of how many times it has given up the CPU), its priority is reduced (i.e., it moves down one queue).
 1. After some time period S, move all the jobs in the system to the topmost queue
 
 
@@ -165,11 +165,11 @@ The Pros:
 The Cons:
 - Voo-doo constants (term was created by John Ousterhout). What values should we pick for a time-slice for each queue? How many queues should we have? What should be the time allotment per-queue? What is the period `S` after which all jobs in the system move to the topmost queue? The questions go on...
 
-_Lottery Shcheduling_
+_Lottery Scheduling_
 
 Exaclty what it sounds like. We pick the next process to run at random with the added twist that we can assign "weights" to certain processes so they are more likely to be picked.
 
-The longer the processes run for the more "fair" this scheduling is as each process runs for exactly the proportion of time its weights corresponds to. These weights can be reffered to as "tickets". The more tickets a process has, the more likely it is to be picked when the scheduler is deciding what job to run next.
+The longer the processes run for the more "fair" this scheduling is as each process runs for exactly the proportion of time its weights corresponds to. These weights can be referred to as "tickets". The more tickets a process has, the more likely it is to be picked when the scheduler is deciding what job to run next.
 
 The Pros:
 - Easy to understand. No voo-doo constants
@@ -218,13 +218,13 @@ These are not system calls. They are provided by the C standard library as easie
 
 #### Mechanism: Address Translation
 
-The idea is the same with limited directed execution. The operating must partner with the hardware to be able to provide a good memory interface to programs. 
+The idea is the same with limited directed execution. The operating system must partner with the hardware to be able to provide a good memory interface to programs. 
 
 Specifically, running programs are made to think they have a continuous chunk of memory starting at 0 which they can use. Perhaps unsurprisingly, this is not actually the case.  
 
 If multiple programs are to share memory, the OS needs to be able to place them at different spots in memory, which means the addresses the programs use will be wrong. To fix this issue, the OS uses _address translation_ or _base and bounds_.  
 
-The idea is that the running program thinks it is accessing address 128 to get its next instruction. However, the next instruction for that program might not be at physcal address 128 because of where the program was placed in memory. So the Operating System with great help from the hardware translates that 128 virtual address its physical address.  
+The idea is that the running program thinks it is accessing address 128 to get its next instruction. However, the next instruction for that program might not be at physical address 128 because of where the program was placed in memory. So the Operating System with great help from the hardware translates that 128 virtual address its physical address.  
 
 This is done by recording a base and bounds for every program. We can think of the _base_ as the offset from 0 to where the program actually resides in memory. So when a program whose base is 10000 tries to access memory location 128, the hardware will actually translate that to the physical memory location 10128. 
 The _bounds_ helps enforce the rule that processes can only access their own memory. If a process tries to access memory greater than the _bounds_, the hardware can run a handler (set up by the OS) that will kill the offending process.
@@ -280,7 +280,7 @@ Loading a page table translation into the TLB means that subsequent address tran
 
 If it's easy, you're missing something. That's my new motto for Operating System things. Speaking of which, we are missing something. Context switches. Since each process has its own page table, processes can't share the TLB. UGH. There are a few ways to deal with this. One is to flush the TLB on a context switch, so that each process starts with a fresh TLB. The downside of this is that each process starts with a fresh TLB, so all the caching work just goes down the drain. Another approach is to allow multiple processes to use the TLB, but differentiate which entry belongs to which process by using an "Address Space Identifier" or ASI. The downside of this is that processes need to share the already small TLB, so even fewer translations can be cached.
 
-Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequenty translations will still need to be saved. How do we decide which entry to evict? TBD. 
+Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequent translations will still need to be saved. How do we decide which entry to evict? TBD. 
 
 #### Advanced Paging
 
@@ -290,14 +290,14 @@ Anyways, the previous section on the TLB was about how we can avoid the expensiv
 If you recall, paging actually had two problems. We addressed the first one ~ we reduce the number of calls to memory by introducing caching. But we have yet to address the second one: Page tables get big.
 
 Page tables get big because we need a page table entry for each page within a process address space, whether it is being used by the process or not. Lots of wasted space.  
-One way to reduce the space taken up by the page table is to increase the page size. This means less pages, which means less entries, which means smaller page table! Yay? _Let's not get to hasty, my simple-minded friend._
+One way to reduce the space taken up by the page table is to increase the page size. This means less pages, which means less entries, which means smaller page table! Yay? _Let's not get too hasty, my simple-minded friend._
 Bigger page sizes now means that a process might be given more memory that it needs. This leads to "internal fragmentation" ~ applications end up allocating pages but only using small bits and pieces of each, filling up memory with barely used areas.  
 
 
 Out of the many other solutions, I'll just point out three, because if you _really_ think about it, this isn't a textbook, but notes about one.
 - Hybrid between segmentation and paging: Honestly, I don't fully understand this one, neither do I care about it. I'm morally against segmentation. Pass.
 - Multi-Level Page Tables: Instead of having one page table, you have a hierarchical  structure of tables. The base case is our normal page table. You have a normal table that tells you, for each page, whether it is allocated or not. If it is allocated it will also tell you what the physical page frame is. For your average process, only a small part of the entries in this page table will be pointing to actual physical frames. The rest only exist to tell you they are not pointing to anything. 
-A 2-Level page table solves that a bit, by breaking up this initial page table (call it A) into equally-sized chunks that are then pointed to by another table (call it B).The twist is that if all the page table entries in a chunk of table A don't point to anything, we can ommit that chunk from A and simply have the corresponding entry in B mark it as unallocated. Savings. This "trick" can be repeated as many times as needed, hence "Multi-Level" page tables.  
+A 2-Level page table solves that a bit, by breaking up this initial page table (call it A) into equally-sized chunks that are then pointed to by another table (call it B).The twist is that if all the page table entries in a chunk of table A don't point to anything, we can omit that chunk from A and simply have the corresponding entry in B mark it as unallocated. Savings. This "trick" can be repeated as many times as needed, hence "Multi-Level" page tables.  
 It's important to understand that we've traded space for complexity though. We solved the space problem, but now we have a complexity problem. These types of tradeoffs show up all over operating system design, and usually people are willing to take on complexity to save on some space or performance. I'm not happy about it, but I guess we have to make do with what we have.  
 - Inverse Page Table: This one surprised me. The idea is to say NO to per-process page tables. We will have one big page table for all the processes. Instead of listing a mapping from a virtual page number to a physical page number, it will do the opposite: list a mapping from every physical page frame number to whatever virtual page number points to it. With this approach, the data structure used becomes really important since our table can't be a normal list. Think about how you would find what physical page frame number corresponds to your virtual page number. Every page table access would require checking the table sequentially. Except it is a huge table because it has as many entries as there are pages in the system's memory. So this cannot be a list, but needs to be some other well thought through data structure.
 
