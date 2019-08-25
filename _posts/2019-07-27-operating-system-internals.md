@@ -5,7 +5,7 @@ excerpt_separator: <!--more-->
 ---
 
 I spend a lot of time using computers, but I'm frankly still scared of what goes on beneath the covers.  
-To change that, I am following along with the free <a class="txt-link" href="http://pages.cs.wisc.edu/~remzi/OSTEP/">Operating Systems: Three Easy Pieces</a> book offered by Computer Science professors at the University of Wisconsin-Madison
+To change that, I am following along with the free [Operating Systems: Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP) book offered by Computer Science professors at the University of Wisconsin-Madison
 
 <!--more-->
 
@@ -313,3 +313,18 @@ This process must be done carefully though. If memory is full, we need a way to 
 
 The act of moving pages in and out of swap space is done by the _swap daemon_ or _page daemon_. This is a special process the operating system will run when it notices that there are fewer than a certain number of pages in memory. This "certain number" is called the "Low Watermark".
 The special process will run until there are at least another certain number of pages in memory. This "another certain number" is called the "High Watermark".
+
+_When we are low on memory, how does the OS decide which pages to evict?_
+
+Given that main memory holds a subset of all the pages in the system, it can be viewed as a sort of cache. Our goal is to minimize cache misses (or maximize cache hits). The number of cache hits/misses lets us calculate the _AMAT (Average Memory Access Time)_ which is a metric we can use to compare how different memory swap policies compare to each other. 
+
+The formulat for AMAT is straightforward: `AMAT = "Time to access memory" + ("Probability of a page fault" * "Time to access disk")`
+
+What this formula means is that a page fault is costly because accessing disk after a page fault takes A LOT more time to do than accessing memory. I don't know exactly how much longer it takes, but the difference is pretty huge. Don't take it lightly. This is why reducing the probability of a page fault is very important.
+
+- The Optimal Replacement Policy: Evict the page that will be accessed furthest in the future. This policy has been show to be the best we can do for caches. However it is not practical because the future is not usually known. It does serve as a good comparison point for the other policies that we can implement.
+- FIFO (first in first out): First page in is the first to get evicted when we need to evict. Generrally bad policy in this case. 
+- Random: We pick a page to evict at random. Depends on how lucky the process is. 
+- The family of history-related policies (LRU, LFU): Least-Recently-Used and Least-Frequently-Used are sibling policies among a family of policies that decide the future based on the past (think back to scheduling). These policies will do well in cases where programs exhibit locality (specifically temporal locality). Most programs exhibit this, but don't think of it as a hard-and-fast rule.
+
+
