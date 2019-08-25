@@ -4,7 +4,7 @@ title: Operating system internals
 excerpt_separator: <!--more-->
 ---
 
-I spend a lot of time using computers, but I'm frankly still scared of what goes on beneath the covers.  
+I spend a lot of time using computers, but I am still scared of what goes on beneath the covers.  
 To change that, I am following along with the free [Operating Systems: Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP) book offered by Computer Science professors at the University of Wisconsin-Madison
 
 <!--more-->
@@ -13,12 +13,11 @@ To change that, I am following along with the free [Operating Systems: Three Eas
 1. [Introduction](#introduction)
 1. [Virtualization](#virtualization)
     1. [Virtualizing The CPU](#virtualizing-the-cpu)
-        1. [Mechanisms And Policies](#mechanisms-and-policies)
+            1. [Mechanisms And Policies](#mechanisms-and-policies)
             1. [Process Creation](#mechanism-process-creation)
             1. [Limited Direct Execution](#mechanism-limited-direct-execution)
             1. [Scheduling](#policy-scheduling)
     1. [Virtualizing Memory](#virtualizing-memory)
-        1. [Mechanisms And Policies](#mechanisms-and-policies)
             1. [Memory Allocation Api](#mechanism-memory-allocation-api)
             1. [Address Translation](#mechanism-address-translation)
             1. [Segmentation](#mechanism-segmentation)
@@ -41,7 +40,7 @@ When we say a program is "running" we mean that a program is doing the following
 This is the Von Neumann model of computing. _That.is.it._
 
 However, just having a single program running at a time is boring.
-As it stands it is a simple <a class="txt-link" href="https://en.wikipedia.org/wiki/Batch_processing">batch processing system</a>. You can't run multiple programs at once and you can't interact with the system while it is running your program. We want more. We need more.
+As it stands it is a simple <a class="txt-link" href="https://en.wikipedia.org/wiki/Batch_processing">batch processing system</a>. You cannot run multiple programs at once and you cannot interact with the system while it is running your program. We want more. We need more.
 
 The body of software that allows us to interact with our laptops in the way we do is called
 the operating system. 
@@ -49,7 +48,7 @@ It enables multiple programs to run seemingly at the same time -- giving us the 
 
 As I am writing this in a text editor, my browser is open to the page containing this
 lesson, music is playing from another tab on the browser, I have a status bar on the
-bottom showing the time, volume, date, battery, and wifi status. I also
+bottom showing the time, volume, date, battery, and the status of my wireless connection. I also
 have another workspace with a terminal window open. None of this would be
 possible without the wild wild things the operating system does behind the scenes
 while programs are seemingly just fetching, decoding and executing instructions.
@@ -84,7 +83,7 @@ OS do that?
 ### Mechanisms and Policies
 
 Mechanisms are low-level operations, methods or protocols to implement a needed
-piece of functionality. They represent the step-by-step details of how to do somthing.
+piece of functionality. They represent the step-by-step details of how to do something.
 
 Policies are the algorithms for making some kind of decision. For example, deciding
 which process to run next.
@@ -106,9 +105,9 @@ processes that are running, ready or blocked. The individual members in this
 list are sometimes called PCBs (process control blocks) or process descriptors.
 
 
-#### Mechanism: Process Creation 
+### Mechanism: Process Creation 
 
-To have multiple processes running on the same computer, the operating system must be able to _create_ them. These is the main Application Programming Interface for process creation:
+To have multiple processes running on the same computer, the operating system must be able to _create_ them. These is the main application programming interface for process creation:
 
 - `fork()` -> Create a child process that starts executing at the same line that the parent process called the method
 
@@ -117,7 +116,7 @@ To have multiple processes running on the same computer, the operating system mu
 - `exec()` -> Load another program into the current running program's address space and start executing that instead.
 
 
-#### Mechanism: Limited Direct Execution 
+### Mechanism: Limited Direct Execution 
 
 When a process is running on the CPU, nothing else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?
 
@@ -125,7 +124,7 @@ A mechanism called Limited Direct Execution is used.
 The elements of this are:
 - Trap instructions.
     - These trap instructions give control to the hardware, which in turn gives control to the OS with additional privileges (kernel mode). The OS does its thing, then executes a return from trap instruction, which gives control back to the hardware, which in turn gives control back to the running program.
-    - Normal prgrams can pass arguments to these trap instructions by placing values on the stack that are understood by the OS.
+    - Normal programs can pass arguments to these trap instructions by placing values on the stack that are understood by the OS.
     - These are called "System Calls"
 - Switching control between process:
     - Cooperative approach: The OS waits for processes to make a system call or perform some illegal action that will give rise to a trap instruction. 
@@ -134,7 +133,7 @@ The elements of this are:
     - Once the next process to be executed has been chosen, a context switch needs to happen. This means saving some state form the current running process, and fetching some state for the soon to be running process. Then return from trap my guy.
 
 
-#### Policy: Scheduling
+### Policy: Scheduling
 
 Some Definitions:
 
@@ -144,7 +143,7 @@ Some Definitions:
 
 Different scheduling policies yield different results for these two metrics. In general, policies that are considered "fair" are terrible for turnaround time but good for response time. 
 
-Polcies that are considered "efficient" are great at turnaround time, but terrible at response time. 
+Policies that are considered "efficient" are great at turnaround time, but terrible at response time. 
 
 _Multi-Level-Feedback Queue Scheduler_
 
@@ -153,7 +152,7 @@ The crux of the problem: "How can we design a scheduler that both minimizes resp
 We do so by coming up with the concept of job priorities. 
 
 Here are the rules:
-1. If Priority(A) > Priority(B), A runs (B doesn’t)
+1. If Priority(A) > Priority(B), A runs (B does not)
 1. If Priority(A) = Priority(B), A & B run in round-robin fashion using the time slice of the given queue.
 1. When a job enters the system, it is placed at the highest priority (the topmost queue).
 1. Once a job uses up its time allotment at a given level (regardless of how many times it has given up the CPU), its priority is reduced (i.e., it moves down one queue).
@@ -164,11 +163,11 @@ The Pros:
 - Appears to offer some balance between response and turnaround time which is what we wanted.
 
 The Cons:
-- Voo-doo constants (term was created by John Ousterhout). What values should we pick for a time-slice for each queue? How many queues should we have? What should be the time allotment per-queue? What is the period `S` after which all jobs in the system move to the topmost queue? The questions go on...
+- "Voo-doo" constants (term was created by John Ousterhout). What values should we pick for a time-slice for each queue? How many queues should we have? What should be the time allotment per-queue? What is the period `S` after which all jobs in the system move to the topmost queue? The questions go on...
 
 _Lottery Scheduling_
 
-Exaclty what it sounds like. We pick the next process to run at random with the added twist that we can assign "weights" to certain processes so they are more likely to be picked.
+Exactly what it sounds like. We pick the next process to run at random with the added twist that we can assign "weights" to certain processes so they are more likely to be picked.
 
 The longer the processes run for the more "fair" this scheduling is as each process runs for exactly the proportion of time its weights corresponds to. These weights can be referred to as "tickets". The more tickets a process has, the more likely it is to be picked when the scheduler is deciding what job to run next.
 
@@ -189,18 +188,16 @@ As each process runs, it accumulates vruntime. Once a time-slice is over, the sc
 ## Virtualizing Memory 
 
 
-We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving proceses the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.
+We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving processes the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.
 
 This goal of this illusion is _easy of use_ and _protection_.   
-It would be terrible to program in an environment where you needed to make sure you didn't overwrite some other program's memory.  
+It would be terrible to program in an environment where you needed to make sure you did not overwrite some other program's memory.  
 It would also be terrible if other programs could overwrite your own memory.  
 
-In the early days of computing, this didn't matter much. Computers only needed to only run a few jobs non-interactively. But humans are demanding and eventually we wanted our computers to be interactive! we wanted them fast and capable of running multiple programs at the same time! and they must support multiple concurrent users! `.__.` So OS designers had no choice. Virtual memory it is. Gone are the simple days
+In the early days of computing, this did not matter much. Computers only needed to only run a few jobs non-interactively. But humans are demanding and eventually we wanted our computers to be interactive! we wanted them fast and capable of running multiple programs at the same time! and they must support multiple concurrent users! `.__.` So OS designers had no choice. Virtual memory it is. Gone are the simple days
 
 
-### Mechanisms and Policies
-
-#### Mechanism: Memory Allocation Api
+### Mechanism: Memory Allocation Api
 
 Generally, when running a program, there are two types of memory "stack" and "heap". The underlying operating system does not make this distinction. It's all just memory.   
 However most programming languages introduce this concept to make a distinction between short-lived and long-lived memory.
@@ -217,7 +214,7 @@ In UNIX/C programs, two methods are available for allocating heap memory
 
 These are not system calls. They are provided by the C standard library as easier interfaces to the `brk` and `sbrk` system calls.
 
-#### Mechanism: Address Translation
+### Mechanism: Address Translation
 
 The idea is the same with limited directed execution. The operating system must partner with the hardware to be able to provide a good memory interface to programs. 
 
@@ -230,28 +227,28 @@ The idea is that the running program thinks it is accessing address 128 to get i
 This is done by recording a base and bounds for every program. We can think of the _base_ as the offset from 0 to where the program actually resides in memory. So when a program whose base is 10000 tries to access memory location 128, the hardware will actually translate that to the physical memory location 10128. 
 The _bounds_ helps enforce the rule that processes can only access their own memory. If a process tries to access memory greater than the _bounds_, the hardware can run a handler (set up by the OS) that will kill the offending process.
 
-#### Mechanism: Segmentation
+### Mechanism: Segmentation
 
-If programmers were content creatures, we would be be content with having _base_ and _bounds_ registers. But nooo. we must have more flexibility. We can't simply give each process a physical block of continuous address space! We need to be able to partition it and place its parts wherever we want, so we can be more memory-efficient and avoid wasted space!
+If programmers were content creatures, we would be be content with having _base_ and _bounds_ registers. But no. We must have more flexibility. We cannot simply give each process a physical block of continuous address space! We need to be able to partition it and place its parts wherever we want, so we can be more memory-efficient and avoid wasted space!
 
 And that is what happened and they called it "segmentation" and it added a few more registers to mark where different segments started, stopped and the direction in which they grew.
 
 This is also the origin of the "segmentation fault" error we see in programs. It happens when we try to access memory in a segment that does not belong to us.
 
 
-#### Free Memory Management
+### Free Memory Management
 
 Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques for keeping track of free space. 
 
 In managing free space, there are a few considerations.
-1. What is the interface we will presenting to the user? e.g. what is the process through which they can request memory? If the user is finished using a chunk of memory, is there a way they can signal that they don't need said chunk any longer? If so, how?
+1. What is the interface we will presenting to the user? e.g. what is the process through which they can request memory? If the user is finished using a chunk of memory, is there a way they can signal that they do not need said chunk any longer? If so, how?
 1. How will we map virtual addresses to physical ones?
 1. How will we implement coalescing and splitting? 
     - __Splitting__: When a user requests some free space, the allocator will find some chunk that can satisfy the request. It will break this chunk into two. The first part will be returned back to the caller and the second will be placed back into the free list. 
     - __Coalescing__: If a user no longer has need for a chunk of memory, the allocator should make sure to store neighboring chunks of memory as one big chunk instead of separate ones.
     - These two techniques help to minimize _external fragmentation_ -- when free space gets chopped up into little pieces subsequent requests might fail to find one continuous chunk of memory that satisfies the demand.
 
-#### Mechanism: Paging
+### Mechanism: Paging
 With segmentation, we chop up free space into different size chunks using different policies to manage the fragmentation that occurs.  
 Thankfully, not all computer scientists went crazy with using segmentation. We have mostly moved to using a different mechanism for managing memory -- paging. This is a much simpler technique where memory is represented as fixed-size chunks (or pages). In the context of physical memory, we use the term _page frames_. In the context of virtual memory (process address space), we use the term _virtual pages_, or just _pages_.
 
@@ -269,40 +266,40 @@ When you really think about it though, you realize that page tables can get big.
 
 Nevertheless, i'm still a much bigger fan of paging that segmentation. It seems much "saner", the right thing to do.
 
-#### Translation Lookaside Buffers
+### Translation Lookaside Buffers
 
 Paging on its own is slow because memory access is costly (relative to the cpu speed). So for paging to be practical, we need to find a way to deal with the page-table access penalty we get. 
 
 One of such ways is using an Address Translation Cache (for historical? reasons, it is called a Translation Lookaside Buffer). This will be a small, but fast area close to the cpu that will be used to store recent page table translations.  
-The first time a procss tries to translate a virtual page table to a physical one, we will have a _TLB miss_ because the translation is not in the cache yet. So we grit our teeth, and fetch the page table from memory as usual. We then add that translation to the TLB. On subsequent requests to translate that page table, its a _TLB hit_ because the translation exists in cache.
+The first time a process tries to translate a virtual page table to a physical one, we will have a _TLB miss_ because the translation is not in the cache yet. So we grit our teeth, and fetch the page table from memory as usual. We then add that translation to the TLB. On subsequent requests to translate that page table, its a _TLB hit_ because the translation exists in cache.
 
 This mechanism works quite well because of spatial locality (if a process accesses a memory location, it is likely to access nearby memory locations) and temporal locality (if a process accesses a memory location, it is likely to access it again in the near future).
 Loading a page table translation into the TLB means that subsequent address translation that fit within that page table will be TLB hits and thus fast. WIN.
 
-If it's easy, you're missing something. That's my new motto for Operating System things. Speaking of which, we are missing something. Context switches. Since each process has its own page table, processes can't share the TLB. UGH. There are a few ways to deal with this. One is to flush the TLB on a context switch, so that each process starts with a fresh TLB. The downside of this is that each process starts with a fresh TLB, so all the caching work just goes down the drain. Another approach is to allow multiple processes to use the TLB, but differentiate which entry belongs to which process by using an "Address Space Identifier" or ASI. The downside of this is that processes need to share the already small TLB, so even fewer translations can be cached.
+If it's easy, you are missing something. That's my new motto for Operating System things. Speaking of which, we are missing something. Context switches. Since each process has its own page table, processes cannot share the TLB. UGH. There are a few ways to deal with this. One is to flush the TLB on a context switch, so that each process starts with a fresh TLB. The downside of this is that each process starts with a fresh TLB, so all the caching work just goes down the drain. Another approach is to allow multiple processes to use the TLB, but differentiate which entry belongs to which process by using an "Address Space Identifier" or ASI. The downside of this is that processes need to share the already small TLB, so even fewer translations can be cached.
 
 Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequent translations will still need to be saved. How do we decide which entry to evict? TBD. 
 
-#### Advanced Paging
+### Advanced Paging
 
-Don't let the word "advanced" scare you off. Stay. It's "fun".   
-Anyways, the previous section on the TLB was about how we can avoid the expensive additional calls to memory when using the paging technique for memory virtualization (yes, this is still about memory virtualization. See the hole we've dug ourselves?).
+Do not let the word "advanced" scare you off. Stay. It's "fun".   
+Anyways, the previous section on the TLB was about how we can avoid the expensive additional calls to memory when using the paging technique for memory virtualization (yes, this is still about memory virtualization. See the hole we have dug for ourselves?).
 
 If you recall, paging actually had two problems. We addressed the first one ~ we reduce the number of calls to memory by introducing caching. But we have yet to address the second one: Page tables get big.
 
 Page tables get big because we need a page table entry for each page within a process address space, whether it is being used by the process or not. Lots of wasted space.  
-One way to reduce the space taken up by the page table is to increase the page size. This means less pages, which means less entries, which means smaller page table! Yay? _Let's not get too hasty, my simple-minded friend._
+One way to reduce the space taken up by the page table is to increase the page size. This means less pages, which means less entries, which means smaller page table? _Let's not get too hasty, my simple-minded friend._
 Bigger page sizes now means that a process might be given more memory that it needs. This leads to "internal fragmentation" ~ applications end up allocating pages but only using small bits and pieces of each, filling up memory with barely used areas.  
 
 
-Out of the many other solutions, I'll just point out three, because if you _really_ think about it, this isn't a textbook, but notes about one.
-- Hybrid between segmentation and paging: Honestly, I don't fully understand this one, neither do I care about it. I'm morally against segmentation. Pass.
+Out of the many other solutions, I will just point out three, because if you _really_ think about it, this is not a textbook, but notes about one.
+- Hybrid between segmentation and paging: Honestly, I do not fully understand this one, neither do I care about it. I am morally against segmentation. Pass.
 - Multi-Level Page Tables: Instead of having one page table, you have a hierarchical  structure of tables. The base case is our normal page table. You have a normal table that tells you, for each page, whether it is allocated or not. If it is allocated it will also tell you what the physical page frame is. For your average process, only a small part of the entries in this page table will be pointing to actual physical frames. The rest only exist to tell you they are not pointing to anything. 
-A 2-Level page table solves that a bit, by breaking up this initial page table (call it A) into equally-sized chunks that are then pointed to by another table (call it B).The twist is that if all the page table entries in a chunk of table A don't point to anything, we can omit that chunk from A and simply have the corresponding entry in B mark it as unallocated. Savings. This "trick" can be repeated as many times as needed, hence "Multi-Level" page tables.  
-It's important to understand that we've traded space for complexity though. We solved the space problem, but now we have a complexity problem. These types of tradeoffs show up all over operating system design, and usually people are willing to take on complexity to save on some space or performance. I'm not happy about it, but I guess we have to make do with what we have.  
-- Inverse Page Table: This one surprised me. The idea is to say NO to per-process page tables. We will have one big page table for all the processes. Instead of listing a mapping from a virtual page number to a physical page number, it will do the opposite: list a mapping from every physical page frame number to whatever virtual page number points to it. With this approach, the data structure used becomes really important since our table can't be a normal list. Think about how you would find what physical page frame number corresponds to your virtual page number. Every page table access would require checking the table sequentially. Except it is a huge table because it has as many entries as there are pages in the system's memory. So this cannot be a list, but needs to be some other well thought through data structure.
+A 2-Level page table solves that a bit, by breaking up this initial page table (call it A) into equally-sized chunks that are then pointed to by another table (call it B).The twist is that if all the page table entries in a chunk of table A do not point to anything, we can omit that chunk from A and simply have the corresponding entry in B mark it as unallocated. Savings. This "trick" can be repeated as many times as needed, hence "Multi-Level" page tables.  
+It's important to understand that we have traded space for complexity though. We solved the space problem, but now we have a complexity problem. These types of trade-offs show up all over operating system design, and usually people are willing to take on complexity to save on some space or performance. I am not happy about it, but I guess we have to make do with what we have.  
+- Inverse Page Table: This one surprised me. The idea is to say NO to per-process page tables. We will have one big page table for all the processes. Instead of listing a mapping from a virtual page number to a physical page number, it will do the opposite: list a mapping from every physical page frame number to whatever virtual page number points to it. With this approach, the data structure used becomes really important since our table cannot be a normal list. Think about how you would find what physical page frame number corresponds to your virtual page number. Every page table access would require checking the table sequentially. Except it is a huge table because it has as many entries as there are pages in the system's memory. So this cannot be a list, but needs to be some other well thought through data structure.
 
-#### Swap space
+### Swap space
 
 Recall that one of the reasons virtualization exists in the first place is to give the illusion that interacting with the hardware is easier that it actually is. This is a good thing. Yet another thing we need to figure out to make such an illusion seamless is address the case when a process needs an address space greater than what can fit into memory. 
 
@@ -318,13 +315,13 @@ _When we are low on memory, how does the OS decide which pages to evict?_
 
 Given that main memory holds a subset of all the pages in the system, it can be viewed as a sort of cache. Our goal is to minimize cache misses (or maximize cache hits). The number of cache hits/misses lets us calculate the _AMAT (Average Memory Access Time)_ which is a metric we can use to compare how different memory swap policies compare to each other. 
 
-The formulat for AMAT is straightforward: `AMAT = "Time to access memory" + ("Probability of a page fault" * "Time to access disk")`
+The formula for AMAT is straightforward: `AMAT = "Time to access memory" + ("Probability of a page fault" * "Time to access disk")`
 
-What this formula means is that a page fault is costly because accessing disk after a page fault takes A LOT more time to do than accessing memory. I don't know exactly how much longer it takes, but the difference is pretty huge. Don't take it lightly. This is why reducing the probability of a page fault is very important.
+What this formula means is that a page fault is costly because accessing disk after a page fault takes A LOT more time to do than accessing memory. I do not know exactly how much longer it takes, but the difference is pretty huge. Do not take it lightly. This is why reducing the probability of a page fault is very important.
 
 - The Optimal Replacement Policy: Evict the page that will be accessed furthest in the future. This policy has been show to be the best we can do for caches. However it is not practical because the future is not usually known. It does serve as a good comparison point for the other policies that we can implement.
-- FIFO (first in first out): First page in is the first to get evicted when we need to evict. Generrally bad policy in this case. 
+- FIFO (first in first out): First page in is the first to get evicted when we need to evict. Generally bad policy in this case. 
 - Random: We pick a page to evict at random. Depends on how lucky the process is. 
-- The family of history-related policies (LRU, LFU): Least-Recently-Used and Least-Frequently-Used are sibling policies among a family of policies that decide the future based on the past (think back to scheduling). These policies will do well in cases where programs exhibit locality (specifically temporal locality). Most programs exhibit this, but don't think of it as a hard-and-fast rule.
+- The family of history-related policies (LRU, LFU): Least-Recently-Used and Least-Frequently-Used are sibling policies among a family of policies that decide the future based on the past (think back to scheduling). These policies will do well in cases where programs exhibit locality (specifically temporal locality). Most programs exhibit this, but do not think of it as a hard-and-fast rule.
 
 
