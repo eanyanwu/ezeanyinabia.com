@@ -323,5 +323,11 @@ What this formula means is that a page fault is costly because accessing disk af
 - FIFO (first in first out): First page in is the first to get evicted when we need to evict. Generally bad policy in this case. 
 - Random: We pick a page to evict at random. Depends on how lucky the process is. 
 - The family of history-related policies (LRU, LFU): Least-Recently-Used and Least-Frequently-Used are sibling policies among a family of policies that decide the future based on the past (think back to scheduling). These policies will do well in cases where programs exhibit locality (specifically temporal locality). Most programs exhibit this, but do not think of it as a hard-and-fast rule.
+    - If implementing these policies, we need to keep track of how many times the page has been accessed (or when last it was accessed). Turns out that this is not practical for large number of pages since we will need to scan all the pages before we can decide on which to evict. Thankfully, we can fudge this using the "clock algorithm" which gives us a good approximation.
 
+Additionally, we need to remember that if a page was modified while in memory, we need to write it back to disk before evicting it. We cannot simply disgard it from memory. Hence what is called the _dirty bit_ to flag that certain pages in memory have been modified since they were swapped into memory. When such a page is being evicted, we will need to write it to disk (which is expensive) first. If page is not dirty, no write is necessary and it can be immediately used.
+
+Lastly, _thrashing_ is what happens when we simply do not have enough physical memory and are constantly swapping pages in and out of disk. Different approaches have been created to deal with this. Some operating systems implement mechanisms to limit the processes that will be run. This is called _admission control_. Other operating systems might implement an _out-of-memory-killer_ process that will choose a memory-intensive process and kill it. This is risky if it kills an important process (X.org on linux for example).
+
+But let us be honest. The REAL solution to thrashing is "buy more memory"
 
