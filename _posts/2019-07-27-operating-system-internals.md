@@ -27,6 +27,7 @@ To change that, I am following along with the free [Operating Systems: Three Eas
         1. [Advanced Paging](#advanced-paging)
         1. [Swap Space](#swap-space)
 1. [Concurrency](#concurrency)
+    1. [Introduction to threads](#introduction-to-threads)
 1. [Persistence](#persistence)
 
 
@@ -330,4 +331,15 @@ Additionally, we need to remember that if a page was modified while in memory, w
 Lastly, _thrashing_ is what happens when we simply do not have enough physical memory and are constantly swapping pages in and out of disk. Different approaches have been created to deal with this. Some operating systems implement mechanisms to limit the processes that will be run. This is called _admission control_. Other operating systems might implement an _out-of-memory-killer_ process that will choose a memory-intensive process and kill it. This is risky if it kills an important process (X.org on linux for example).
 
 But let us be honest. The REAL solution to thrashing is "buy more memory"
+
+# Concurrency 
+
+To keep on with the peach analogy, imagine you have a group of people around a table full of peaches. Each person would like a peach. How do we get them all to get their peaches as fast as possible but without tripping over each other?
+
+## Introduction to threads
+
+Up till now, we have implicitly assumed that a process (i.e. a running program) is sequential, it runs one instruction, then the next, then the next. While this is true, it is possible to provide yet another layer of virtualization called _threads_.  
+Why do this? Because first, our computers have evolved to have multiple processors, so the software must evolve as well to make use of them. Second, having  multiple threads in a program allows for continuing useful work on one thread even when the other threads might be waiting for I/O. Third, all the threads for in single process share the same address space. (This is both a pro and a con, but that's a discussion for another time).
+
+Apart from the shared address space part, threads and processes are similar. Both are things that don't actually exist, but the OS makes us believe they do. Both have data structures holding per-item state like the registers that are being used and their values. Both are run on the cpu(s) at the whim of the hopefully smart scheduler. Both need to be context-switched.
 
