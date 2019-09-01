@@ -28,6 +28,8 @@ To change that, I am following along with the free [Operating Systems: Three Eas
         1. [Swap Space](#swap-space)
 1. [Concurrency](#concurrency)
     1. [Introduction to threads](#introduction-to-threads)
+    1. [Thread api](#thread-api)
+    1. [Thread locking](#thread-locking)
 1. [Persistence](#persistence)
 
 
@@ -342,4 +344,22 @@ Up till now, we have implicitly assumed that a process (i.e. a running program) 
 Why do this? Because first, our computers have evolved to have multiple processors, so the software must evolve as well to make use of them. Second, having  multiple threads in a program allows for continuing useful work on one thread even when the other threads might be waiting for I/O. Third, all the threads for in single process share the same address space. (This is both a pro and a con, but that's a discussion for another time).
 
 Apart from the shared address space part, threads and processes are similar. Both are things that don't actually exist, but the OS makes us believe they do. Both have data structures holding per-item state like the registers that are being used and their values. Both are run on the cpu(s) at the whim of the hopefully smart scheduler. Both need to be context-switched.
+
+## Thread api
+
+I was not going to have a section for this chapter, but the book had a very funny paragraph that I want to reproduce here. It is talking about thread creation, and the author just finished giving an example on how to perform it. Emphasis mine:
+
+> "And there it is! Once you create a thread, you really have another live executing entity, complete with its own call stack, running within the same address space as all the currently existing threads in the program. _The fun thus begins!_"
+
+
+## Thread locking
+
+Thread concurrency comes with a host of problems because it introduces shared state. One such class of problem is a "data race", which is the behavior that occurs when two threads try to access shared data at the same time. What to do?:
+- Well, we _could_ just abandon threads altogether and look to other techniques such as message passing for concurrency (note the hint of sarcasm). However, even my cynical self has to admit that thread concurrency has its perks. It would be a damn shame not to have it.
+- Thread locking: We introduce a mechanism for making access to shared sequential -- only one thread can do so at a time. 
+
+Let's backtrack a bit. The reason why two threads accessing shared data at the same time is a problem is that they might not do so in an _atomic_ way. And because of this, at any point during the process of updating this piece of shared data, they might be pre-empted by the operating system scheduler and another thread might run, which could then try to also update the same piece of shared data, leading to potential data corruption. The solution to this problem is to make sure that whenever a thread starts executing some operation on shared data (i.e. executing in the _critical path_), it is the only thread doing so. 
+
+This is achieved via locks, also called mutexes. When a thread acquires a lock, it can start executing the critical path, then give up the lock once done. If other threads come around and try to execute the critical path, they will be unable to acquire the lock, and thus must wait until it is free before they can go any further.
+
 
