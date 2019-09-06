@@ -12,24 +12,25 @@ To change that, I am following along with the free [Operating Systems: Three Eas
 # Contents
 1. [Introduction](#introduction)
 1. [Virtualization](#virtualization)
-    1. [Virtualizing The CPU](#virtualizing-the-cpu)
-        1. [Mechanisms And Policies](#mechanisms-and-policies)
-        1. [Process Creation](#mechanism-process-creation)
-        1. [Limited Direct Execution](#mechanism-limited-direct-execution)
+    1. [Virtualizing the CPU](#virtualizing-the-cpu)
+        1. [Mechanisms and policies](#mechanisms-and-policies)
+        1. [Process creation](#mechanism-process-creation)
+        1. [Limited direct Execution](#mechanism-limited-direct-execution)
         1. [Scheduling](#policy-scheduling)
-    1. [Virtualizing Memory](#virtualizing-memory)
-        1. [Memory Allocation Api](#mechanism-memory-allocation-api)
-        1. [Address Translation](#mechanism-address-translation)
+    1. [Virtualizing memory](#virtualizing-memory)
+        1. [Memory allocation Api](#mechanism-memory-allocation-api)
+        1. [Address translation](#mechanism-address-translation)
         1. [Segmentation](#mechanism-segmentation)
-        1. [Free Memory Management](#free-memory-management)
+        1. [Free memory management](#free-memory-management)
         1. [Paging](#mechanism-paging)
-        1. [Translation Lookaside Buffers](#translation-lookaside-buffers)
-        1. [Advanced Paging](#advanced-paging)
-        1. [Swap Space](#swap-space)
+        1. [Translation lookaside buffers](#translation-lookaside-buffers)
+        1. [Advanced paging](#advanced-paging)
+        1. [Swap space](#swap-space)
 1. [Concurrency](#concurrency)
     1. [Introduction to threads](#introduction-to-threads)
     1. [Thread api](#thread-api)
     1. [Thread locking](#thread-locking)
+    1. [Concurrent data structures](#concurrent-data-structures)
 1. [Persistence](#persistence)
 
 
@@ -83,7 +84,7 @@ resources that the computer might be connected to ?
 The answer is clearly "virtualization"...but how does the
 OS do that?
 
-### Mechanisms and Policies
+### Mechanisms and policies
 
 Mechanisms are low-level operations, methods or protocols to implement a needed
 piece of functionality. They represent the step-by-step details of how to do something.
@@ -108,7 +109,7 @@ processes that are running, ready or blocked. The individual members in this
 list are sometimes called PCBs (process control blocks) or process descriptors.
 
 
-### Mechanism: Process Creation 
+### Mechanism: Process creation 
 
 To have multiple processes running on the same computer, the operating system must be able to _create_ them. These is the main application programming interface for process creation:
 
@@ -119,7 +120,7 @@ To have multiple processes running on the same computer, the operating system mu
 - `exec()` -> Load another program into the current running program's address space and start executing that instead.
 
 
-### Mechanism: Limited Direct Execution 
+### Mechanism: Limited direct execution 
 
 When a process is running on the CPU, nothing else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?
 
@@ -188,7 +189,7 @@ As each process runs, it accumulates vruntime. Once a time-slice is over, the sc
 > Yet another knob is used to make sure time-slices are not too short. This is the `min_granularity`, which is the minimum amount of time a time-slice should be. If the set `sched_latency` implies a value lower than `min_granularity`, it is set to `min_granularity` instead.
 
 
-## Virtualizing Memory 
+## Virtualizing memory 
 
 
 We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving processes the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.
@@ -200,7 +201,7 @@ It would also be terrible if other programs could overwrite your own memory.
 In the early days of computing, this did not matter much. Computers only needed to only run a few jobs non-interactively. But humans are demanding and eventually we wanted our computers to be interactive! we wanted them fast and capable of running multiple programs at the same time! and they must support multiple concurrent users! `.__.` So OS designers had no choice. Virtual memory it is. Gone are the simple days
 
 
-### Mechanism: Memory Allocation Api
+### Mechanism: Memory allocation API
 
 Generally, when running a program, there are two types of memory "stack" and "heap". The underlying operating system does not make this distinction. It's all just memory.   
 However most programming languages introduce this concept to make a distinction between short-lived and long-lived memory.
@@ -217,7 +218,7 @@ In UNIX/C programs, two methods are available for allocating heap memory
 
 These are not system calls. They are provided by the C standard library as easier interfaces to the `brk` and `sbrk` system calls.
 
-### Mechanism: Address Translation
+### Mechanism: Address translation
 
 The idea is the same with limited directed execution. The operating system must partner with the hardware to be able to provide a good memory interface to programs. 
 
@@ -239,7 +240,7 @@ And that is what happened and they called it "segmentation" and it added a few m
 This is also the origin of the "segmentation fault" error we see in programs. It happens when we try to access memory in a segment that does not belong to us.
 
 
-### Free Memory Management
+### Free memory management
 
 Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques for keeping track of free space. 
 
@@ -269,7 +270,7 @@ When you really think about it though, you realize that page tables can get big.
 
 Nevertheless, i'm still a much bigger fan of paging that segmentation. It seems much "saner", the right thing to do.
 
-### Translation Lookaside Buffers
+### Translation lookaside buffers
 
 Paging on its own is slow because memory access is costly (relative to the cpu speed). So for paging to be practical, we need to find a way to deal with the page-table access penalty we get. 
 
@@ -283,7 +284,7 @@ If it's easy, you are missing something. That's my new motto for Operating Syste
 
 Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequent translations will still need to be saved. How do we decide which entry to evict? TBD. 
 
-### Advanced Paging
+### Advanced paging
 
 Do not let the word "advanced" scare you off. Stay. It's "fun".   
 Anyways, the previous section on the TLB was about how we can avoid the expensive additional calls to memory when using the paging technique for memory virtualization (yes, this is still about memory virtualization. See the hole we have dug for ourselves?).
@@ -375,3 +376,11 @@ Let's dig deeper then. How are locks implemented? Locks are supposed to guarante
 
 All these approaches handle the atomic aspect of implementing a lock. However, they still involve spin locking. That is, when a thread is unable to acquire a lock implemented by one of the above techniques, it will sit in a while loop. This is not efficient because you could have multiple threads get scheduled only to waste cpu cycles executing a while loop, while the thread with the critical section is waiting. Spin locking also means that there is no gurantee that a thread won't starve if scheduled and descheduled at just the right times (or wrong times, it depends on your perspective). Solving this requires some more additions to the locking code. Look up _park/unpark_, _linux futexes_ and _two-phase locks_ for examples of how the spin locking problem is solved.
 
+## Concurrent data structures
+
+The next step after implementing basic locks is including them into common data structures. This allows these data structures to be _thread safe_ ~ meaning they can be safely used when accessed by multiple threads.
+
+As with many things in this course, there is a trade-off between simplicity and performance. Most of the time, the obvious implementation where you just lock the entire structure before accessing it does not scale well. So usually, we optimize the structure until it is "good enough". This is left undefined on purpose, because "good enough" depends on the context in which the data structure will be used. Sometimes, there is no need to add complexity for some slight increase in performance if the current performance works. 
+
+RANDOM TIP:
+> Beware of control flow changes that lead to function returns. Because many function begin by acquiring a lock, allocating memory or some other type of initialization, when errors arise, the code has to undo all that state before returning, which is error prone.
