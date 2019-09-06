@@ -362,4 +362,16 @@ Let's backtrack a bit. The reason why two threads accessing shared data at the s
 
 This is achieved via locks, also called mutexes. When a thread acquires a lock, it can start executing the critical path, then give up the lock once done. If other threads come around and try to execute the critical path, they will be unable to acquire the lock, and thus must wait until it is free before they can go any further.
 
+Let's dig deeper then. How are locks implemented? Locks are supposed to guarantee that a certain operation will only be executed by one thread without interruption. How do we guarantee that the OS won't interrupt and schedule another thread to run that same operation before the first thread is done? Surprise, we will probably need some help from the hardware:
+
+- Locks could be implemented as "Disabling Interrupts". This works, but is bad for a few reasons:
+    - We are allowing the calling thread to execute a _privileged_ operation. A rogue program could take a lock and never release it. The OS would never be able to regain control of the system.
+    - This is tricky/does not work on multiple processors. The disabling of interrupts is on a processor level, so other threads on other processors will still be able to proceed with the critical section.
+- Loads/Stores: The hardware sets a flag in memory that signals that a thread is executing the critical section. If another thread comes a long, it will not be allowed to proceed until the flag is unset. This is called a _spin lock_, because any thread that tries to take the lock while it is, well, _locked_, will sit in a loop, waiting, wasting cpu cycles.
+    - This basic load/store does not work. One can imagine a situation where two threads take a lock at the same time because loading, setting then storing something in memory is not an atomic operation. This behavior is what professionals call "bad". 
+- Atomic variants of load/store: There are various hardware-implemented atomic variants of load and store that work (e.g. test and set, compare-and-swap, load-linked and store conditional, fetch-and-add).
+    - The different techniques under this umbrella vary in how they perform in terms of correctness (providing _mutual exclusion_), _fairness_ (no thread will left behind, fetch-and-add for a ticket lock) and _performance_ (is it fast and efficient).
+
+
+All these approaches handle the atomic aspect of implementing a lock. However, by themselves, all of them still involve spin locking. That is, when a thread is unable to acquire a lock implemented by one of the above techniques, it will sit in a while loop, spinning. Solving this requires some more additions to the locking code. Look up _park/unpark_, _linux futexes_ and _two-phase locks_ for examples of how the spin locking problem is solved.
 
