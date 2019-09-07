@@ -57,8 +57,7 @@
         <h1>Operating System Internals</h1>
         <p>I spend a lot of time using computers, but I am still scared of what goes on beneath the covers.<br>
 To change that, I am following along with the free <a href="http://pages.cs.wisc.edu/~remzi/OSTEP">Operating Systems: Three Easy Pieces</a> book offered by Computer Science professors at the University of Wisconsin-Madison</p>
-<h1>Contents</h1>
-<ol>
+<h1 id="contents">Contents</h1><ol>
 <li><a href="../../wiki/operating-system-internals/#introduction">Introduction</a></li>
 <li><a href="../../wiki/operating-system-internals/#virtualization">Virtualization</a><ol>
 <li><a href="../../wiki/operating-system-internals/#virtualizing-the-cpu">Virtualizing the CPU</a><ol>
@@ -90,8 +89,7 @@ To change that, I am following along with the free <a href="http://pages.cs.wisc
 </li>
 <li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a></li>
 </ol>
-<h1>Introduction</h1>
-<p>When we say a program is "running" we mean that a program is doing the following over and over again:</p>
+<h1 id="introduction">Introduction</h1><p>When we say a program is "running" we mean that a program is doing the following over and over again:</p>
 <ul>
 <li>fetch an instruction </li>
 <li>decode the instruction</li>
@@ -110,11 +108,9 @@ have another workspace with a terminal window open. None of this would be
 possible without the wild wild things the operating system does behind the scenes
 while programs are seemingly just fetching, decoding and executing instructions.</p>
 <p>So how does an operating system (or OS) do this magic? Three easy pieces; virtualization, concurrency and persistence.</p>
-<h1>Virtualization</h1>
-<p>Virtualization: "Sharing one peach among many peach-eaters while making them think
+<h1 id="virtualization">Virtualization</h1><p>Virtualization: "Sharing one peach among many peach-eaters while making them think
 they each have a peach to themselves"</p>
-<h2>Virtualizing the CPU</h2>
-<p>Program -- A program is a lifeless thing, sitting on disk. A bunch of
+<h2 id="virtualizing-the-cpu">Virtualizing the CPU</h2><p>Program -- A program is a lifeless thing, sitting on disk. A bunch of
 instructions and maybe some data, waiting to spring into action</p>
 <p>Process -- A <em>running</em> program.</p>
 <p>It is the operating system that takes a program and gets it running,
@@ -126,8 +122,7 @@ programs to run on? How do we give the illusion of access other physical
 resources that the computer might be connected to ?
 The answer is clearly "virtualization"...but how does the
 OS do that?</p>
-<h3>Mechanisms and policies</h3>
-<p>Mechanisms are low-level operations, methods or protocols to implement a needed
+<h3 id="mechanisms-and-policies">Mechanisms and policies</h3><p>Mechanisms are low-level operations, methods or protocols to implement a needed
 piece of functionality. They represent the step-by-step details of how to do something.</p>
 <p>Policies are the algorithms for making some kind of decision. For example, deciding
 which process to run next.</p>
@@ -145,8 +140,7 @@ operations might also be possible.</p>
 <p><strong>Process List</strong>: Data structure that the OS uses to track information about
 processes that are running, ready or blocked. The individual members in this
 list are sometimes called PCBs (process control blocks) or process descriptors.</p>
-<h3>Mechanism: Process creation</h3>
-<p>To have multiple processes running on the same computer, the operating system must be able to <em>create</em> them. These is the main application programming interface for process creation:</p>
+<h3 id="mechanism:-process-creation">Mechanism: Process creation</h3><p>To have multiple processes running on the same computer, the operating system must be able to <em>create</em> them. These is the main application programming interface for process creation:</p>
 <ul>
 <li><p><code>fork()</code> -&gt; Create a child process that starts executing at the same line that the parent process called the method</p>
 </li>
@@ -155,8 +149,7 @@ list are sometimes called PCBs (process control blocks) or process descriptors.<
 <li><p><code>exec()</code> -&gt; Load another program into the current running program's address space and start executing that instead.</p>
 </li>
 </ul>
-<h3>Mechanism: Limited direct execution</h3>
-<p>When a process is running on the CPU, nothing else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?</p>
+<h3 id="mechanism:-limited-direct-execution">Mechanism: Limited direct execution</h3><p>When a process is running on the CPU, nothing else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?</p>
 <p>A mechanism called Limited Direct Execution is used.
 The elements of this are:</p>
 <ul>
@@ -174,8 +167,7 @@ The elements of this are:</p>
 </ul>
 </li>
 </ul>
-<h3>Policy: Scheduling</h3>
-<p>Some Definitions:</p>
+<h3 id="policy:-scheduling">Policy: Scheduling</h3><p>Some Definitions:</p>
 <blockquote><p>Turnaround Time: The time from when the job entered the system to when it completes</p>
 <p>Response Time: The time from when the job enters the system to when it first starts executing.</p>
 </blockquote>
@@ -216,14 +208,12 @@ As each process runs, it accumulates vruntime. Once a time-slice is over, the sc
 <p>The time-slice is determined by another knob called <code>sched_latency</code>, which is (usually) the period over which the scheduler will be completely fair. It takes this value and divides it by the number of processes, which will give it the time-slice to use.</p>
 <p>Yet another knob is used to make sure time-slices are not too short. This is the <code>min_granularity</code>, which is the minimum amount of time a time-slice should be. If the set <code>sched_latency</code> implies a value lower than <code>min_granularity</code>, it is set to <code>min_granularity</code> instead.</p>
 </blockquote>
-<h2>Virtualizing memory</h2>
-<p>We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving processes the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.</p>
+<h2 id="virtualizing-memory">Virtualizing memory</h2><p>We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving processes the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.</p>
 <p>This goal of this illusion is <em>easy of use</em> and <em>protection</em>.<br>
 It would be terrible to program in an environment where you needed to make sure you did not overwrite some other program's memory.<br>
 It would also be terrible if other programs could overwrite your own memory.</p>
 <p>In the early days of computing, this did not matter much. Computers only needed to only run a few jobs non-interactively. But humans are demanding and eventually we wanted our computers to be interactive! we wanted them fast and capable of running multiple programs at the same time! and they must support multiple concurrent users! <code>.__.</code> So OS designers had no choice. Virtual memory it is. Gone are the simple days</p>
-<h3>Mechanism: Memory allocation API</h3>
-<p>Generally, when running a program, there are two types of memory "stack" and "heap". The underlying operating system does not make this distinction. It's all just memory.<br>
+<h3 id="mechanism:-memory-allocation-api">Mechanism: Memory allocation API</h3><p>Generally, when running a program, there are two types of memory "stack" and "heap". The underlying operating system does not make this distinction. It's all just memory.<br>
 However most programming languages introduce this concept to make a distinction between short-lived and long-lived memory.</p>
 <p>Short-lived memory or stack memory only lasts within a function call.<br>
 Long-lived memory or heap memory can last between function invocations.</p>
@@ -234,19 +224,16 @@ Long-lived memory or heap memory can last between function invocations.</p>
 <li><code>free</code> -&gt; Marks the memory pointed to the pointer argument as free to used again i.e. not-allocated</li>
 </ul>
 <p>These are not system calls. They are provided by the C standard library as easier interfaces to the <code>brk</code> and <code>sbrk</code> system calls.</p>
-<h3>Mechanism: Address translation</h3>
-<p>The idea is the same with limited directed execution. The operating system must partner with the hardware to be able to provide a good memory interface to programs.</p>
+<h3 id="mechanism:-address-translation">Mechanism: Address translation</h3><p>The idea is the same with limited directed execution. The operating system must partner with the hardware to be able to provide a good memory interface to programs.</p>
 <p>Specifically, running programs are made to think they have a continuous chunk of memory starting at 0 which they can use. Perhaps unsurprisingly, this is not actually the case.</p>
 <p>If multiple programs are to share memory, the OS needs to be able to place them at different spots in memory, which means the addresses the programs use will be wrong. To fix this issue, the OS uses <em>address translation</em> or <em>base and bounds</em>.</p>
 <p>The idea is that the running program thinks it is accessing address 128 to get its next instruction. However, the next instruction for that program might not be at physical address 128 because of where the program was placed in memory. So the Operating System with great help from the hardware translates that 128 virtual address its physical address.</p>
 <p>This is done by recording a base and bounds for every program. We can think of the <em>base</em> as the offset from 0 to where the program actually resides in memory. So when a program whose base is 10000 tries to access memory location 128, the hardware will actually translate that to the physical memory location 10128. 
 The <em>bounds</em> helps enforce the rule that processes can only access their own memory. If a process tries to access memory greater than the <em>bounds</em>, the hardware can run a handler (set up by the OS) that will kill the offending process.</p>
-<h3>Mechanism: Segmentation</h3>
-<p>If programmers were content creatures, we would be be content with having <em>base</em> and <em>bounds</em> registers. But no. We must have more flexibility. We cannot simply give each process a physical block of continuous address space! We need to be able to partition it and place its parts wherever we want, so we can be more memory-efficient and avoid wasted space!</p>
+<h3 id="mechanism:-segmentation">Mechanism: Segmentation</h3><p>If programmers were content creatures, we would be be content with having <em>base</em> and <em>bounds</em> registers. But no. We must have more flexibility. We cannot simply give each process a physical block of continuous address space! We need to be able to partition it and place its parts wherever we want, so we can be more memory-efficient and avoid wasted space!</p>
 <p>And that is what happened and they called it "segmentation" and it added a few more registers to mark where different segments started, stopped and the direction in which they grew.</p>
 <p>This is also the origin of the "segmentation fault" error we see in programs. It happens when we try to access memory in a segment that does not belong to us.</p>
-<h3>Free memory management</h3>
-<p>Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques for keeping track of free space.</p>
+<h3 id="free-memory-management">Free memory management</h3><p>Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques for keeping track of free space.</p>
 <p>In managing free space, there are a few considerations.</p>
 <ol>
 <li>What is the interface we will presenting to the user? e.g. what is the process through which they can request memory? If the user is finished using a chunk of memory, is there a way they can signal that they do not need said chunk any longer? If so, how?</li>
@@ -258,8 +245,7 @@ The <em>bounds</em> helps enforce the rule that processes can only access their 
 </ul>
 </li>
 </ol>
-<h3>Mechanism: Paging</h3>
-<p>With segmentation, we chop up free space into different size chunks using different policies to manage the fragmentation that occurs.<br>
+<h3 id="mechanism:-paging">Mechanism: Paging</h3><p>With segmentation, we chop up free space into different size chunks using different policies to manage the fragmentation that occurs.<br>
 Thankfully, not all computer scientists went crazy with using segmentation. We have mostly moved to using a different mechanism for managing memory -- paging. This is a much simpler technique where memory is represented as fixed-size chunks (or pages). In the context of physical memory, we use the term <em>page frames</em>. In the context of virtual memory (process address space), we use the term <em>virtual pages</em>, or just <em>pages</em>.</p>
 <p>For this to work, each process needs to have a <em>page table</em> ~ a mapping from virtual pages to physical ones. To translate a virtual address to a physical one, we split the address into two parts: a virtual page number (VPN) and an offset. The vpn lets us know what virtual page the memory address is in and the offset is...well, the offset into that virtual page.<br>
 This works well because given a continuous process address space, we can designate a portion of a the higher-order bits to represent the page number. As we move throughout the address space the page number/offset works because higher order bits get incremented slower than lower order bits, and when they do, the lower order bits "reset" to zero. This works both in binary and decimal. Food for thought.</p>
@@ -273,16 +259,14 @@ This works well because given a continuous process address space, we can designa
 </ul>
 <p>When you really think about it though, you realize that page tables can get big. We can no longer store the values we need to translate addresses in registers, we have to use memory. Another pretty big downside to this is that every memory access incurs more costs than usual because we have to make an additional fetch to get the page table from memory. More fetches might be necessary depending on how things are setup.</p>
 <p>Nevertheless, i'm still a much bigger fan of paging that segmentation. It seems much "saner", the right thing to do.</p>
-<h3>Translation lookaside buffers</h3>
-<p>Paging on its own is slow because memory access is costly (relative to the cpu speed). So for paging to be practical, we need to find a way to deal with the page-table access penalty we get.</p>
+<h3 id="translation-lookaside-buffers">Translation lookaside buffers</h3><p>Paging on its own is slow because memory access is costly (relative to the cpu speed). So for paging to be practical, we need to find a way to deal with the page-table access penalty we get.</p>
 <p>One of such ways is using an Address Translation Cache (for historical? reasons, it is called a Translation Lookaside Buffer). This will be a small, but fast area close to the cpu that will be used to store recent page table translations.<br>
 The first time a process tries to translate a virtual page table to a physical one, we will have a <em>TLB miss</em> because the translation is not in the cache yet. So we grit our teeth, and fetch the page table from memory as usual. We then add that translation to the TLB. On subsequent requests to translate that page table, its a <em>TLB hit</em> because the translation exists in cache.</p>
 <p>This mechanism works quite well because of spatial locality (if a process accesses a memory location, it is likely to access nearby memory locations) and temporal locality (if a process accesses a memory location, it is likely to access it again in the near future).
 Loading a page table translation into the TLB means that subsequent address translation that fit within that page table will be TLB hits and thus fast. WIN.</p>
 <p>If it's easy, you are missing something. That's my new motto for Operating System things. Speaking of which, we are missing something. Context switches. Since each process has its own page table, processes cannot share the TLB. UGH. There are a few ways to deal with this. One is to flush the TLB on a context switch, so that each process starts with a fresh TLB. The downside of this is that each process starts with a fresh TLB, so all the caching work just goes down the drain. Another approach is to allow multiple processes to use the TLB, but differentiate which entry belongs to which process by using an "Address Space Identifier" or ASI. The downside of this is that processes need to share the already small TLB, so even fewer translations can be cached.</p>
 <p>Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequent translations will still need to be saved. How do we decide which entry to evict? TBD.</p>
-<h3>Advanced paging</h3>
-<p>Do not let the word "advanced" scare you off. Stay. It's "fun".<br>
+<h3 id="advanced-paging">Advanced paging</h3><p>Do not let the word "advanced" scare you off. Stay. It's "fun".<br>
 Anyways, the previous section on the TLB was about how we can avoid the expensive additional calls to memory when using the paging technique for memory virtualization (yes, this is still about memory virtualization. See the hole we have dug for ourselves?).</p>
 <p>If you recall, paging actually had two problems. We addressed the first one ~ we reduce the number of calls to memory by introducing caching. But we have yet to address the second one: Page tables get big.</p>
 <p>Page tables get big because we need a page table entry for each page within a process address space, whether it is being used by the process or not. Lots of wasted space.<br>
@@ -296,8 +280,7 @@ A 2-Level page table solves that a bit, by breaking up this initial page table (
 It's important to understand that we have traded space for complexity though. We solved the space problem, but now we have a complexity problem. These types of trade-offs show up all over operating system design, and usually people are willing to take on complexity to save on some space or performance. I am not happy about it, but I guess we have to make do with what we have.  </li>
 <li>Inverse Page Table: This one surprised me. The idea is to say NO to per-process page tables. We will have one big page table for all the processes. Instead of listing a mapping from a virtual page number to a physical page number, it will do the opposite: list a mapping from every physical page frame number to whatever virtual page number points to it. With this approach, the data structure used becomes really important since our table cannot be a normal list. Think about how you would find what physical page frame number corresponds to your virtual page number. Every page table access would require checking the table sequentially. Except it is a huge table because it has as many entries as there are pages in the system's memory. So this cannot be a list, but needs to be some other well thought through data structure.</li>
 </ul>
-<h3>Swap space</h3>
-<p>Recall that one of the reasons virtualization exists in the first place is to give the illusion that interacting with the hardware is easier that it actually is. This is a good thing. Yet another thing we need to figure out to make such an illusion seamless is address the case when a process needs an address space greater than what can fit into memory.</p>
+<h3 id="swap-space">Swap space</h3><p>Recall that one of the reasons virtualization exists in the first place is to give the illusion that interacting with the hardware is easier that it actually is. This is a good thing. Yet another thing we need to figure out to make such an illusion seamless is address the case when a process needs an address space greater than what can fit into memory.</p>
 <p>Thankfully, this magic is not all that complicated. We have a small, but fast TLB (address translation cache). We have a bigger but slower memory (RAM). Now it's time to introduce the much bigger, but much slower "disk". This could be a hard drive (HD) or a solid state drive (SSD). It's big, permanent and slow storage. If there is no space in memory to fit an address space, and THE SHOW MUST GO ON, we have no option but to start throwing address spaces onto disk.</p>
 <p>This process of <em>swapping pages from memory to disk and vice versa</em> is controlled by the <em>present bit</em> in a process's page table. The bit will tell us if that page is present in memory or not. 
 This process must be done carefully though. If memory is full, we need a way to choose which pages to move to disk. Ideally, these would be pages that are not frequently accessed.</p>
@@ -319,18 +302,14 @@ The special process will run until there are at least another certain number of 
 <p>Additionally, we need to remember that if a page was modified while in memory, we need to write it back to disk before evicting it. We cannot simply disgard it from memory. Hence what is called the <em>dirty bit</em> to flag that certain pages in memory have been modified since they were swapped into memory. When such a page is being evicted, we will need to write it to disk (which is expensive) first. If page is not dirty, no write is necessary and it can be immediately used.</p>
 <p>Lastly, <em>thrashing</em> is what happens when we simply do not have enough physical memory and are constantly swapping pages in and out of disk. Different approaches have been created to deal with this. Some operating systems implement mechanisms to limit the processes that will be run. This is called <em>admission control</em>. Other operating systems might implement an <em>out-of-memory-killer</em> process that will choose a memory-intensive process and kill it. This is risky if it kills an important process (X.org on linux for example).</p>
 <p>But let us be honest. The REAL solution to thrashing is "buy more memory"</p>
-<h1>Concurrency</h1>
-<p>To keep on with the peach analogy, imagine you have a group of people around a table full of peaches. Each person would like a peach. How do we get them all to get their peaches as fast as possible but without tripping over each other?</p>
-<h2>Introduction to threads</h2>
-<p>Up till now, we have implicitly assumed that a process (i.e. a running program) is sequential, it runs one instruction, then the next, then the next. While this is true, it is possible to provide yet another layer of virtualization called <em>threads</em>.<br>
+<h1 id="concurrency">Concurrency</h1><p>To keep on with the peach analogy, imagine you have a group of people around a table full of peaches. Each person would like a peach. How do we get them all to get their peaches as fast as possible but without tripping over each other?</p>
+<h2 id="introduction-to-threads">Introduction to threads</h2><p>Up till now, we have implicitly assumed that a process (i.e. a running program) is sequential, it runs one instruction, then the next, then the next. While this is true, it is possible to provide yet another layer of virtualization called <em>threads</em>.<br>
 Why do this? Because first, our computers have evolved to have multiple processors, so the software must evolve as well to make use of them. Second, having  multiple threads in a program allows for continuing useful work on one thread even when the other threads might be waiting for I/O. Third, all the threads for in single process share the same address space. (This is both a pro and a con, but that's a discussion for another time).</p>
 <p>Apart from the shared address space part, threads and processes are similar. Both are things that don't actually exist, but the OS makes us believe they do. Both have data structures holding per-item state like the registers that are being used and their values. Both are run on the cpu(s) at the whim of the hopefully smart scheduler. Both need to be context-switched.</p>
-<h2>Thread api</h2>
-<p>I was not going to have a section for this chapter, but the book had a very funny paragraph that I want to reproduce here. It is talking about thread creation, and the author just finished giving an example on how to perform it. Emphasis mine:</p>
+<h2 id="thread-api">Thread api</h2><p>I was not going to have a section for this chapter, but the book had a very funny paragraph that I want to reproduce here. It is talking about thread creation, and the author just finished giving an example on how to perform it. Emphasis mine:</p>
 <blockquote><p>"And there it is! Once you create a thread, you really have another live executing entity, complete with its own call stack, running within the same address space as all the currently existing threads in the program. <em>The fun thus begins!</em>"</p>
 </blockquote>
-<h2>Thread locking</h2>
-<p>Thread concurrency comes with a host of problems because it introduces shared state. One such class of problem is a "data race", which is the behavior that occurs when two threads try to access shared data at the same time. What to do?:</p>
+<h2 id="thread-locking">Thread locking</h2><p>Thread concurrency comes with a host of problems because it introduces shared state. One such class of problem is a "data race", which is the behavior that occurs when two threads try to access shared data at the same time. What to do?:</p>
 <ul>
 <li>Well, we <em>could</em> just abandon threads altogether and look to other techniques such as message passing for concurrency (note the hint of sarcasm). However, even my cynical self has to admit that thread concurrency has its perks. It would be a damn shame not to have it.</li>
 <li>Thread locking: We introduce a mechanism for making access to shared sequential -- only one thread can do so at a time. </li>
@@ -358,8 +337,7 @@ excerpt_separator: <!--more--></li>
 To change that, I am following along with the free <a href="http://pages.cs.wisc.edu/~remzi/OSTEP">Operating Systems: Three Easy Pieces</a> book offered by Computer Science professors at the University of Wisconsin-Madison</p>
 <!--more-->
 
-<h1>Contents</h1>
-<ol>
+<h1 id="contents">Contents</h1><ol>
 <li><a href="../../wiki/operating-system-internals/#introduction">Introduction</a></li>
 <li><a href="../../wiki/operating-system-internals/#virtualization">Virtualization</a><ol>
 <li><a href="../../wiki/operating-system-internals/#virtualizing-the-cpu">Virtualizing the CPU</a><ol>
@@ -391,8 +369,7 @@ To change that, I am following along with the free <a href="http://pages.cs.wisc
 </li>
 <li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a></li>
 </ol>
-<h1>Introduction</h1>
-<p>When we say a program is "running" we mean that a program is doing the following over and over again:</p>
+<h1 id="introduction">Introduction</h1><p>When we say a program is "running" we mean that a program is doing the following over and over again:</p>
 <ul>
 <li>fetch an instruction </li>
 <li>decode the instruction</li>
@@ -411,11 +388,9 @@ have another workspace with a terminal window open. None of this would be
 possible without the wild wild things the operating system does behind the scenes
 while programs are seemingly just fetching, decoding and executing instructions.</p>
 <p>So how does an operating system (or OS) do this magic? Three easy pieces; virtualization, concurrency and persistence.</p>
-<h1>Virtualization</h1>
-<p>Virtualization: "Sharing one peach among many peach-eaters while making them think
+<h1 id="virtualization">Virtualization</h1><p>Virtualization: "Sharing one peach among many peach-eaters while making them think
 they each have a peach to themselves"</p>
-<h2>Virtualizing the CPU</h2>
-<p>Program -- A program is a lifeless thing, sitting on disk. A bunch of
+<h2 id="virtualizing-the-cpu">Virtualizing the CPU</h2><p>Program -- A program is a lifeless thing, sitting on disk. A bunch of
 instructions and maybe some data, waiting to spring into action</p>
 <p>Process -- A <em>running</em> program.</p>
 <p>It is the operating system that takes a program and gets it running,
@@ -427,8 +402,7 @@ programs to run on? How do we give the illusion of access other physical
 resources that the computer might be connected to ?
 The answer is clearly "virtualization"...but how does the
 OS do that?</p>
-<h3>Mechanisms and policies</h3>
-<p>Mechanisms are low-level operations, methods or protocols to implement a needed
+<h3 id="mechanisms-and-policies">Mechanisms and policies</h3><p>Mechanisms are low-level operations, methods or protocols to implement a needed
 piece of functionality. They represent the step-by-step details of how to do something.</p>
 <p>Policies are the algorithms for making some kind of decision. For example, deciding
 which process to run next.</p>
@@ -446,8 +420,7 @@ operations might also be possible.</p>
 <p><strong>Process List</strong>: Data structure that the OS uses to track information about
 processes that are running, ready or blocked. The individual members in this
 list are sometimes called PCBs (process control blocks) or process descriptors.</p>
-<h3>Mechanism: Process creation</h3>
-<p>To have multiple processes running on the same computer, the operating system must be able to <em>create</em> them. These is the main application programming interface for process creation:</p>
+<h3 id="mechanism:-process-creation">Mechanism: Process creation</h3><p>To have multiple processes running on the same computer, the operating system must be able to <em>create</em> them. These is the main application programming interface for process creation:</p>
 <ul>
 <li><p><code>fork()</code> -&gt; Create a child process that starts executing at the same line that the parent process called the method</p>
 </li>
@@ -456,8 +429,7 @@ list are sometimes called PCBs (process control blocks) or process descriptors.<
 <li><p><code>exec()</code> -&gt; Load another program into the current running program's address space and start executing that instead.</p>
 </li>
 </ul>
-<h3>Mechanism: Limited direct execution</h3>
-<p>When a process is running on the CPU, nothing else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?</p>
+<h3 id="mechanism:-limited-direct-execution">Mechanism: Limited direct execution</h3><p>When a process is running on the CPU, nothing else is, including the operating system. So how can the OS (which is not running) manage processes (which are running)?</p>
 <p>A mechanism called Limited Direct Execution is used.
 The elements of this are:</p>
 <ul>
@@ -475,8 +447,7 @@ The elements of this are:</p>
 </ul>
 </li>
 </ul>
-<h3>Policy: Scheduling</h3>
-<p>Some Definitions:</p>
+<h3 id="policy:-scheduling">Policy: Scheduling</h3><p>Some Definitions:</p>
 <blockquote><p>Turnaround Time: The time from when the job entered the system to when it completes</p>
 <p>Response Time: The time from when the job enters the system to when it first starts executing.</p>
 </blockquote>
@@ -517,14 +488,12 @@ As each process runs, it accumulates vruntime. Once a time-slice is over, the sc
 <p>The time-slice is determined by another knob called <code>sched_latency</code>, which is (usually) the period over which the scheduler will be completely fair. It takes this value and divides it by the number of processes, which will give it the time-slice to use.</p>
 <p>Yet another knob is used to make sure time-slices are not too short. This is the <code>min_granularity</code>, which is the minimum amount of time a time-slice should be. If the set <code>sched_latency</code> implies a value lower than <code>min_granularity</code>, it is set to <code>min_granularity</code> instead.</p>
 </blockquote>
-<h2>Virtualizing memory</h2>
-<p>We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving processes the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.</p>
+<h2 id="virtualizing-memory">Virtualizing memory</h2><p>We are not yet done with virtualization though. The OS also needs to virtualize any shared hardware that processes might want to use. This includes memory. The virtual memory manager is responsible for giving processes the illusion that they have a sequential block of memory to themselves. This is called the "address space" for process.</p>
 <p>This goal of this illusion is <em>easy of use</em> and <em>protection</em>.<br>
 It would be terrible to program in an environment where you needed to make sure you did not overwrite some other program's memory.<br>
 It would also be terrible if other programs could overwrite your own memory.</p>
 <p>In the early days of computing, this did not matter much. Computers only needed to only run a few jobs non-interactively. But humans are demanding and eventually we wanted our computers to be interactive! we wanted them fast and capable of running multiple programs at the same time! and they must support multiple concurrent users! <code>.__.</code> So OS designers had no choice. Virtual memory it is. Gone are the simple days</p>
-<h3>Mechanism: Memory allocation API</h3>
-<p>Generally, when running a program, there are two types of memory "stack" and "heap". The underlying operating system does not make this distinction. It's all just memory.<br>
+<h3 id="mechanism:-memory-allocation-api">Mechanism: Memory allocation API</h3><p>Generally, when running a program, there are two types of memory "stack" and "heap". The underlying operating system does not make this distinction. It's all just memory.<br>
 However most programming languages introduce this concept to make a distinction between short-lived and long-lived memory.</p>
 <p>Short-lived memory or stack memory only lasts within a function call.<br>
 Long-lived memory or heap memory can last between function invocations.</p>
@@ -535,19 +504,16 @@ Long-lived memory or heap memory can last between function invocations.</p>
 <li><code>free</code> -&gt; Marks the memory pointed to the pointer argument as free to used again i.e. not-allocated</li>
 </ul>
 <p>These are not system calls. They are provided by the C standard library as easier interfaces to the <code>brk</code> and <code>sbrk</code> system calls.</p>
-<h3>Mechanism: Address translation</h3>
-<p>The idea is the same with limited directed execution. The operating system must partner with the hardware to be able to provide a good memory interface to programs.</p>
+<h3 id="mechanism:-address-translation">Mechanism: Address translation</h3><p>The idea is the same with limited directed execution. The operating system must partner with the hardware to be able to provide a good memory interface to programs.</p>
 <p>Specifically, running programs are made to think they have a continuous chunk of memory starting at 0 which they can use. Perhaps unsurprisingly, this is not actually the case.</p>
 <p>If multiple programs are to share memory, the OS needs to be able to place them at different spots in memory, which means the addresses the programs use will be wrong. To fix this issue, the OS uses <em>address translation</em> or <em>base and bounds</em>.</p>
 <p>The idea is that the running program thinks it is accessing address 128 to get its next instruction. However, the next instruction for that program might not be at physical address 128 because of where the program was placed in memory. So the Operating System with great help from the hardware translates that 128 virtual address its physical address.</p>
 <p>This is done by recording a base and bounds for every program. We can think of the <em>base</em> as the offset from 0 to where the program actually resides in memory. So when a program whose base is 10000 tries to access memory location 128, the hardware will actually translate that to the physical memory location 10128. 
 The <em>bounds</em> helps enforce the rule that processes can only access their own memory. If a process tries to access memory greater than the <em>bounds</em>, the hardware can run a handler (set up by the OS) that will kill the offending process.</p>
-<h3>Mechanism: Segmentation</h3>
-<p>If programmers were content creatures, we would be be content with having <em>base</em> and <em>bounds</em> registers. But no. We must have more flexibility. We cannot simply give each process a physical block of continuous address space! We need to be able to partition it and place its parts wherever we want, so we can be more memory-efficient and avoid wasted space!</p>
+<h3 id="mechanism:-segmentation">Mechanism: Segmentation</h3><p>If programmers were content creatures, we would be be content with having <em>base</em> and <em>bounds</em> registers. But no. We must have more flexibility. We cannot simply give each process a physical block of continuous address space! We need to be able to partition it and place its parts wherever we want, so we can be more memory-efficient and avoid wasted space!</p>
 <p>And that is what happened and they called it "segmentation" and it added a few more registers to mark where different segments started, stopped and the direction in which they grew.</p>
 <p>This is also the origin of the "segmentation fault" error we see in programs. It happens when we try to access memory in a segment that does not belong to us.</p>
-<h3>Free memory management</h3>
-<p>Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques for keeping track of free space.</p>
+<h3 id="free-memory-management">Free memory management</h3><p>Free memory management goes hand in hand with segmentation. Since the address space of a process is not one continuous range of memory, we need to come up with clever techniques for keeping track of free space.</p>
 <p>In managing free space, there are a few considerations.</p>
 <ol>
 <li>What is the interface we will presenting to the user? e.g. what is the process through which they can request memory? If the user is finished using a chunk of memory, is there a way they can signal that they do not need said chunk any longer? If so, how?</li>
@@ -559,8 +525,7 @@ The <em>bounds</em> helps enforce the rule that processes can only access their 
 </ul>
 </li>
 </ol>
-<h3>Mechanism: Paging</h3>
-<p>With segmentation, we chop up free space into different size chunks using different policies to manage the fragmentation that occurs.<br>
+<h3 id="mechanism:-paging">Mechanism: Paging</h3><p>With segmentation, we chop up free space into different size chunks using different policies to manage the fragmentation that occurs.<br>
 Thankfully, not all computer scientists went crazy with using segmentation. We have mostly moved to using a different mechanism for managing memory -- paging. This is a much simpler technique where memory is represented as fixed-size chunks (or pages). In the context of physical memory, we use the term <em>page frames</em>. In the context of virtual memory (process address space), we use the term <em>virtual pages</em>, or just <em>pages</em>.</p>
 <p>For this to work, each process needs to have a <em>page table</em> ~ a mapping from virtual pages to physical ones. To translate a virtual address to a physical one, we split the address into two parts: a virtual page number (VPN) and an offset. The vpn lets us know what virtual page the memory address is in and the offset is...well, the offset into that virtual page.<br>
 This works well because given a continuous process address space, we can designate a portion of a the higher-order bits to represent the page number. As we move throughout the address space the page number/offset works because higher order bits get incremented slower than lower order bits, and when they do, the lower order bits "reset" to zero. This works both in binary and decimal. Food for thought.</p>
@@ -574,16 +539,14 @@ This works well because given a continuous process address space, we can designa
 </ul>
 <p>When you really think about it though, you realize that page tables can get big. We can no longer store the values we need to translate addresses in registers, we have to use memory. Another pretty big downside to this is that every memory access incurs more costs than usual because we have to make an additional fetch to get the page table from memory. More fetches might be necessary depending on how things are setup.</p>
 <p>Nevertheless, i'm still a much bigger fan of paging that segmentation. It seems much "saner", the right thing to do.</p>
-<h3>Translation lookaside buffers</h3>
-<p>Paging on its own is slow because memory access is costly (relative to the cpu speed). So for paging to be practical, we need to find a way to deal with the page-table access penalty we get.</p>
+<h3 id="translation-lookaside-buffers">Translation lookaside buffers</h3><p>Paging on its own is slow because memory access is costly (relative to the cpu speed). So for paging to be practical, we need to find a way to deal with the page-table access penalty we get.</p>
 <p>One of such ways is using an Address Translation Cache (for historical? reasons, it is called a Translation Lookaside Buffer). This will be a small, but fast area close to the cpu that will be used to store recent page table translations.<br>
 The first time a process tries to translate a virtual page table to a physical one, we will have a <em>TLB miss</em> because the translation is not in the cache yet. So we grit our teeth, and fetch the page table from memory as usual. We then add that translation to the TLB. On subsequent requests to translate that page table, its a <em>TLB hit</em> because the translation exists in cache.</p>
 <p>This mechanism works quite well because of spatial locality (if a process accesses a memory location, it is likely to access nearby memory locations) and temporal locality (if a process accesses a memory location, it is likely to access it again in the near future).
 Loading a page table translation into the TLB means that subsequent address translation that fit within that page table will be TLB hits and thus fast. WIN.</p>
 <p>If it's easy, you are missing something. That's my new motto for Operating System things. Speaking of which, we are missing something. Context switches. Since each process has its own page table, processes cannot share the TLB. UGH. There are a few ways to deal with this. One is to flush the TLB on a context switch, so that each process starts with a fresh TLB. The downside of this is that each process starts with a fresh TLB, so all the caching work just goes down the drain. Another approach is to allow multiple processes to use the TLB, but differentiate which entry belongs to which process by using an "Address Space Identifier" or ASI. The downside of this is that processes need to share the already small TLB, so even fewer translations can be cached.</p>
 <p>Then there is the issue of cache eviction. As the quote goes "There are only two hard things in Computer Science: cache invalidation and naming things". The TLB will eventually get full, but subsequent translations will still need to be saved. How do we decide which entry to evict? TBD.</p>
-<h3>Advanced paging</h3>
-<p>Do not let the word "advanced" scare you off. Stay. It's "fun".<br>
+<h3 id="advanced-paging">Advanced paging</h3><p>Do not let the word "advanced" scare you off. Stay. It's "fun".<br>
 Anyways, the previous section on the TLB was about how we can avoid the expensive additional calls to memory when using the paging technique for memory virtualization (yes, this is still about memory virtualization. See the hole we have dug for ourselves?).</p>
 <p>If you recall, paging actually had two problems. We addressed the first one ~ we reduce the number of calls to memory by introducing caching. But we have yet to address the second one: Page tables get big.</p>
 <p>Page tables get big because we need a page table entry for each page within a process address space, whether it is being used by the process or not. Lots of wasted space.<br>
@@ -597,8 +560,7 @@ A 2-Level page table solves that a bit, by breaking up this initial page table (
 It's important to understand that we have traded space for complexity though. We solved the space problem, but now we have a complexity problem. These types of trade-offs show up all over operating system design, and usually people are willing to take on complexity to save on some space or performance. I am not happy about it, but I guess we have to make do with what we have.  </li>
 <li>Inverse Page Table: This one surprised me. The idea is to say NO to per-process page tables. We will have one big page table for all the processes. Instead of listing a mapping from a virtual page number to a physical page number, it will do the opposite: list a mapping from every physical page frame number to whatever virtual page number points to it. With this approach, the data structure used becomes really important since our table cannot be a normal list. Think about how you would find what physical page frame number corresponds to your virtual page number. Every page table access would require checking the table sequentially. Except it is a huge table because it has as many entries as there are pages in the system's memory. So this cannot be a list, but needs to be some other well thought through data structure.</li>
 </ul>
-<h3>Swap space</h3>
-<p>Recall that one of the reasons virtualization exists in the first place is to give the illusion that interacting with the hardware is easier that it actually is. This is a good thing. Yet another thing we need to figure out to make such an illusion seamless is address the case when a process needs an address space greater than what can fit into memory.</p>
+<h3 id="swap-space">Swap space</h3><p>Recall that one of the reasons virtualization exists in the first place is to give the illusion that interacting with the hardware is easier that it actually is. This is a good thing. Yet another thing we need to figure out to make such an illusion seamless is address the case when a process needs an address space greater than what can fit into memory.</p>
 <p>Thankfully, this magic is not all that complicated. We have a small, but fast TLB (address translation cache). We have a bigger but slower memory (RAM). Now it's time to introduce the much bigger, but much slower "disk". This could be a hard drive (HD) or a solid state drive (SSD). It's big, permanent and slow storage. If there is no space in memory to fit an address space, and THE SHOW MUST GO ON, we have no option but to start throwing address spaces onto disk.</p>
 <p>This process of <em>swapping pages from memory to disk and vice versa</em> is controlled by the <em>present bit</em> in a process's page table. The bit will tell us if that page is present in memory or not. 
 This process must be done carefully though. If memory is full, we need a way to choose which pages to move to disk. Ideally, these would be pages that are not frequently accessed.</p>
@@ -620,18 +582,14 @@ The special process will run until there are at least another certain number of 
 <p>Additionally, we need to remember that if a page was modified while in memory, we need to write it back to disk before evicting it. We cannot simply disgard it from memory. Hence what is called the <em>dirty bit</em> to flag that certain pages in memory have been modified since they were swapped into memory. When such a page is being evicted, we will need to write it to disk (which is expensive) first. If page is not dirty, no write is necessary and it can be immediately used.</p>
 <p>Lastly, <em>thrashing</em> is what happens when we simply do not have enough physical memory and are constantly swapping pages in and out of disk. Different approaches have been created to deal with this. Some operating systems implement mechanisms to limit the processes that will be run. This is called <em>admission control</em>. Other operating systems might implement an <em>out-of-memory-killer</em> process that will choose a memory-intensive process and kill it. This is risky if it kills an important process (X.org on linux for example).</p>
 <p>But let us be honest. The REAL solution to thrashing is "buy more memory"</p>
-<h1>Concurrency</h1>
-<p>To keep on with the peach analogy, imagine you have a group of people around a table full of peaches. Each person would like a peach. How do we get them all to get their peaches as fast as possible but without tripping over each other?</p>
-<h2>Introduction to threads</h2>
-<p>Up till now, we have implicitly assumed that a process (i.e. a running program) is sequential, it runs one instruction, then the next, then the next. While this is true, it is possible to provide yet another layer of virtualization called <em>threads</em>.<br>
+<h1 id="concurrency">Concurrency</h1><p>To keep on with the peach analogy, imagine you have a group of people around a table full of peaches. Each person would like a peach. How do we get them all to get their peaches as fast as possible but without tripping over each other?</p>
+<h2 id="introduction-to-threads">Introduction to threads</h2><p>Up till now, we have implicitly assumed that a process (i.e. a running program) is sequential, it runs one instruction, then the next, then the next. While this is true, it is possible to provide yet another layer of virtualization called <em>threads</em>.<br>
 Why do this? Because first, our computers have evolved to have multiple processors, so the software must evolve as well to make use of them. Second, having  multiple threads in a program allows for continuing useful work on one thread even when the other threads might be waiting for I/O. Third, all the threads for in single process share the same address space. (This is both a pro and a con, but that's a discussion for another time).</p>
 <p>Apart from the shared address space part, threads and processes are similar. Both are things that don't actually exist, but the OS makes us believe they do. Both have data structures holding per-item state like the registers that are being used and their values. Both are run on the cpu(s) at the whim of the hopefully smart scheduler. Both need to be context-switched.</p>
-<h2>Thread api</h2>
-<p>I was not going to have a section for this chapter, but the book had a very funny paragraph that I want to reproduce here. It is talking about thread creation, and the author just finished giving an example on how to perform it. Emphasis mine:</p>
+<h2 id="thread-api">Thread api</h2><p>I was not going to have a section for this chapter, but the book had a very funny paragraph that I want to reproduce here. It is talking about thread creation, and the author just finished giving an example on how to perform it. Emphasis mine:</p>
 <blockquote><p>"And there it is! Once you create a thread, you really have another live executing entity, complete with its own call stack, running within the same address space as all the currently existing threads in the program. <em>The fun thus begins!</em>"</p>
 </blockquote>
-<h2>Thread locking</h2>
-<p>Thread concurrency comes with a host of problems because it introduces shared state. One such class of problem is a "data race", which is the behavior that occurs when two threads try to access shared data at the same time. What to do?:</p>
+<h2 id="thread-locking">Thread locking</h2><p>Thread concurrency comes with a host of problems because it introduces shared state. One such class of problem is a "data race", which is the behavior that occurs when two threads try to access shared data at the same time. What to do?:</p>
 <ul>
 <li>Well, we <em>could</em> just abandon threads altogether and look to other techniques such as message passing for concurrency (note the hint of sarcasm). However, even my cynical self has to admit that thread concurrency has its perks. It would be a damn shame not to have it.</li>
 <li>Thread locking: We introduce a mechanism for making access to shared sequential -- only one thread can do so at a time. </li>
@@ -655,8 +613,7 @@ Why do this? Because first, our computers have evolved to have multiple processo
 </li>
 </ul>
 <p>All these approaches handle the atomic aspect of implementing a lock. However, they still involve spin locking. That is, when a thread is unable to acquire a lock implemented by one of the above techniques, it will sit in a while loop. This is not efficient because you could have multiple threads get scheduled only to waste cpu cycles executing a while loop, while the thread with the critical section is waiting. Spin locking also means that there is no gurantee that a thread won't starve if scheduled and descheduled at just the right times (or wrong times, it depends on your perspective). Solving this requires some more additions to the locking code. Look up <em>park/unpark</em>, <em>linux futexes</em> and <em>two-phase locks</em> for examples of how the spin locking problem is solved.</p>
-<h2>Concurrent data structures</h2>
-<p>The next step after implementing basic locks is including them into common data structures. This allows these data structures to be <em>thread safe</em> ~ meaning they can be safely used when accessed by multiple threads.</p>
+<h2 id="concurrent-data-structures">Concurrent data structures</h2><p>The next step after implementing basic locks is including them into common data structures. This allows these data structures to be <em>thread safe</em> ~ meaning they can be safely used when accessed by multiple threads.</p>
 <p>As with many things in this course, there is a trade-off between simplicity and performance. Most of the time, the obvious implementation where you just lock the entire structure before accessing it does not scale well. So usually, we optimize the structure until it is "good enough". This is left undefined on purpose, because "good enough" depends on the context in which the data structure will be used. Sometimes, there is no need to add complexity for some slight increase in performance if the current performance works.</p>
 <p>RANDOM TIP:</p>
 <blockquote><p>Beware of control flow changes that lead to function returns. Because many function begin by acquiring a lock, allocating memory or some other type of initialization, when errors arise, the code has to undo all that state before returning, which is error prone.ditional, fetch-and-add).</p>
@@ -664,8 +621,7 @@ Why do this? Because first, our computers have evolved to have multiple processo
 </code></pre>
 </blockquote>
 <p>All these approaches handle the atomic aspect of implementing a lock. However, they still involve spin locking. That is, when a thread is unable to acquire a lock implemented by one of the above techniques, it will sit in a while loop. This is not efficient because you could have multiple threads get scheduled only to waste cpu cycles executing a while loop, while the thread with the critical section is waiting. Spin locking also means that there is no gurantee that a thread won't starve if scheduled and descheduled at just the right times (or wrong times, it depends on your perspective). Solving this requires some more additions to the locking code. Look up <em>park/unpark</em>, <em>linux futexes</em> and <em>two-phase locks</em> for examples of how the spin locking problem is solved.</p>
-<h2>Concurrent data structures</h2>
-<p>The next step after implementing basic locks is including them into common data structures. This allows these data structures to be <em>thread safe</em> ~ meaning they can be safely used when accessed by multiple threads.</p>
+<h2 id="concurrent-data-structures">Concurrent data structures</h2><p>The next step after implementing basic locks is including them into common data structures. This allows these data structures to be <em>thread safe</em> ~ meaning they can be safely used when accessed by multiple threads.</p>
 <p>As with many things in this course, there is a trade-off between simplicity and performance. Most of the time, the obvious implementation where you just lock the entire structure before accessing it does not scale well. So usually, we optimize the structure until it is "good enough". This is left undefined on purpose, because "good enough" depends on the context in which the data structure will be used. Sometimes, there is no need to add complexity for some slight increase in performance if the current performance works.</p>
 <p>RANDOM TIP:</p>
 <blockquote><p>Beware of control flow changes that lead to function returns. Because many function begin by acquiring a lock, allocating memory or some other type of initialization, when errors arise, the code has to undo all that state before returning, which is error prone.</p>
