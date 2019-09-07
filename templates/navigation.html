@@ -1,0 +1,7 @@
+<nav class="tab-button-bar banner w-100 relative">
+    {% for item bag('navigation').items()  %}
+    <a href="{{ item.link }}" class="tab-button tc w-third dib no-underline pv3 {% if page.url == item.link %}tab-selected{% endif %}">
+        {{ item.name }}
+    </a>
+    {% endfor %}
+</nav>

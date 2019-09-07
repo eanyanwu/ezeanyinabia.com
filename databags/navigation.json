@@ -1,0 +1,16 @@
+{
+    "navigation_items": [
+        {
+            "name": "Links",
+            "link": "/links"
+        },
+        {
+            "name": "Faq",
+            "link": "/faq"
+        },
+        {
+            "name": "Wiki",
+            "link": "/wiki"
+        }
+    ]
+}

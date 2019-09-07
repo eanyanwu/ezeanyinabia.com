@@ -1,0 +1,40 @@
+_model: default
+---
+title: Ezeanyinabia Anyanwu
+---
+body:
+
+
+<div class="banner w-100 relative">
+    <img class="db" src="/images/faq.jpeg" alt="Main banner: Eze explaining topic to two listeners."/>
+
+    <div id="heading" class="garamond tc ba pa2 fw5 margin-auto tracked-mega">
+        QUESTIONS YOU MIGHT HAVE
+    </div>
+
+    <div id="sub-heading" class="garamond tc pa2 fw2 margin-auto i">
+        
+    </div>
+</div>
+
+<section id="faq" class="pv4 f5 f4-ns">
+    <div class="ph2 pb4 w-90 margin-auto">
+        <p class="question pa1 b">Q: Are you currently looking for a job?</p>
+        <p class="answer pa1 measure">
+            A: No :)
+        </p>
+        <p class="mt4 question pa1 b">Q: Where are you from?</p>
+        <p class="answer pa1 measure">
+            A: I was born in Nigeria, but have spent more time living in Senegal, Morrocco and now the United States.
+        </p>
+        <p class="mt4 question pa1 b">Q: Where are you currently living?</p>
+        <p class="answer pa1 measure">
+            A: I live in Greater Boston.
+        </p>
+
+        <p class="mt4 question pa1 b">Q: What non-programming languages do you speak?</p>
+        <p class="answer pa1 measure">
+            A: English <span class="i">(duh)</span>, French and Arabic.
+        </p>
+    </div>
+</section>
