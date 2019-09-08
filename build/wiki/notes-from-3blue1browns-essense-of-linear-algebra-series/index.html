@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" sizes="57x57" href="/assets/favicons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/assets/favicons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/assets/favicons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/assets/favicons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/assets/favicons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/assets/favicons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/assets/favicons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/assets/favicons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="/assets/favicons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/assets/favicons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/assets/favicons/ms-icon-144x144.png">
+        
+        <!-- site wide style sheets --> 
+        <link rel="stylesheet" type="text/css" href="/css/colors.css">
+        <link rel="stylesheet" type="text/css" href="/css/vendor/tachyons.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/main.css">
+
+        <!-- custom stylesheets -->
+        
+    <link rel="stylesheet" type="text/css" href="/css/post.css">
+
+
+        <title>Wiki - Notes from 3blue1brown&#39;s Essense of linear algebra series</title>
+    </head>
+    <body class="lh-copy">
+        <div id="container" class="w-100 margin-auto">
+            <!-- site wide navigation -->
+            <nav class="tab-button-bar banner w-100 relative">
+                <a href="../../" class="tab-button tc w-third dib no-underline pv3 ">About</a>
+                
+                <a href="../../links/" class="tab-button tc w-third dib no-underline pv3 ">
+                    Links
+                </a>
+                
+                <a href="../../faq/" class="tab-button tc w-third dib no-underline pv3 ">
+                    Faq
+                </a>
+                
+                <a href="../../wiki/" class="tab-button tc w-third dib no-underline pv3 tab-selected">
+                    Wiki
+                </a>
+                
+            </nav>
+            
+    <section id="post" class="f5 f4-ns w-90 margin-auto">
+        <h1>Notes from 3blue1brown&#39;s Essense of linear algebra series</h1>
+        <p>The <a href="https://www.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw/featured">3blue1brown</a> channel is a treasure trove of great teaching. I stumbled upon his playlist on linear algebra a few months ago while dabbling in graphics. It is hard to understate how helpful it was. In a few videos he is able to effectively answer the question "why linear algebra?" and give the watcher a really good intuition for thinking about the subject. I'm considering going back into a computer graphics stint, so I'm re-watching the series and taking notes this time.</p>
+<p>Table of contents:</p>
+<ol>
+<li><a href="../../wiki/notes-from-3blue1browns-essense-of-linear-algebra-series/#vectors-what-even-are-they?">Vectors, what even are they?</a></li>
+</ol>
+<h1 id="vectors-what-even-are-they?">Vectors, what even are they?</h1><blockquote><p>"The introduction of numbers as coordinates is an act of violence"  -Hermann Weyl</p>
+</blockquote>
+<p>The mathematics, computer science and physics students usually think of vectors in slightly different ways.<br>
+The physics student thinks of a vector as an arrow in space with a direction and magnitude.<br>
+The computer science student thinks of a vector as an ordered list of numbers.<br>
+The mathematician thinks of vectors in a more abstract way; as entities where there is a sensible notion of adding two vectors and multiplying a vector by a number.</p>
+<p>For now though, we will think of a vector as a combination of the physics and computer science perspective.<br>
+"A vector is an arrow inside a coordinate system with its tail sitting at the origin. This arrow is also a list of numbers! In a two dimensional coordinate system for example, this list contains the instructions for how to get from the tail of the arrow to its tip."</p>
+<p>Back to mathematician's view for a second. Interestingly, every topic in linear algebra will center around vector addition and multiplication by numbers. How do we think about these two operations from our perspective?</p>
+<p><strong>Vector addition:</strong> Each vector represents a certain "movement"; a step in a certain direction and distance in space. If you "move" along the first vector, then "move" along the second, you will end up in a location that can also be represented by one "movement". This "movement" is the sum of both vectors.
+Notice that this parallels adding numbers on a number line. 2 + 5 means moving two steps to the right, then 5 steps to the right. The result is also moving 7 steps to the right.
+Numerically, in terms of a list of numbers, we are simply adding all the rightward motions, then all the vertical motions.</p>
+<p><strong>Multiplication by a number:</strong> If you multiply a vector by the number 3, you are stretching out that vector so that it is three times longer than when you started. When you multiply the vector by a number between 0 and 1, you are squishing it down.
+If you multiply it by a negative number, the same applies except you also switch its direction first before squishing/stretching. This process is called "scaling", which is why the numbers that act like this are called "scalars".
+Numerically, you multiply each of the instructions in the list by that scalar.</p>
+<p>Even though we will stick with the combination of the computer science and physics student perspectives for now, we will come back to the mathematics student's view later. The usefulness of linear algebra has less to do with which view you take, and more with the ability to switch between those views.
+It gives someone who is number crunching a way to visualize what he is doing visually, and it gives the visual creator a way to represent what she is trying to do mathematically.  Win - Win.</p>
+
+    </section>
+
+        </div>
+    </body>
+</html>

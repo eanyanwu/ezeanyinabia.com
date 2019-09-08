@@ -1,0 +1,39 @@
+title: Notes from 3blue1brown's Essense of linear algebra series
+---
+body:
+
+The [3blue1brown](https://www.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw/featured) channel is a treasure trove of great teaching. I stumbled upon his playlist on linear algebra a few months ago while dabbling in graphics. It is hard to understate how helpful it was. In a few videos he is able to effectively answer the question "why linear algebra?" and give the watcher a really good intuition for thinking about the subject. I'm considering going back into a computer graphics stint, so I'm re-watching the series and taking notes this time.
+
+Table of contents:
+1. [Vectors, what even are they?](#vectors-what-even-are-they?)
+
+
+# Vectors, what even are they?
+
+> "The introduction of numbers as coordinates is an act of violence"  -Hermann Weyl
+
+The mathematics, computer science and physics students usually think of vectors in slightly different ways.  
+The physics student thinks of a vector as an arrow in space with a direction and magnitude.   
+The computer science student thinks of a vector as an ordered list of numbers.   
+The mathematician thinks of vectors in a more abstract way; as entities where there is a sensible notion of adding two vectors and multiplying a vector by a number. 
+
+For now though, we will think of a vector as a combination of the physics and computer science perspective.   
+"A vector is an arrow inside a coordinate system with its tail sitting at the origin. This arrow is also a list of numbers! In a two dimensional coordinate system for example, this list contains the instructions for how to get from the tail of the arrow to its tip."
+
+Back to mathematician's view for a second. Interestingly, every topic in linear algebra will center around vector addition and multiplication by numbers. How do we think about these two operations from our perspective?
+
+**Vector addition:** Each vector represents a certain "movement"; a step in a certain direction and distance in space. If you "move" along the first vector, then "move" along the second, you will end up in a location that can also be represented by one "movement". This "movement" is the sum of both vectors.
+Notice that this parallels adding numbers on a number line. 2 + 5 means moving two steps to the right, then 5 steps to the right. The result is also moving 7 steps to the right.
+Numerically, in terms of a list of numbers, we are simply adding all the rightward motions, then all the vertical motions.
+
+
+**Multiplication by a number:** If you multiply a vector by the number 3, you are stretching out that vector so that it is three times longer than when you started. When you multiply the vector by a number between 0 and 1, you are squishing it down.
+If you multiply it by a negative number, the same applies except you also switch its direction first before squishing/stretching. This process is called "scaling", which is why the numbers that act like this are called "scalars".
+Numerically, you multiply each of the instructions in the list by that scalar.
+
+Even though we will stick with the combination of the computer science and physics student perspectives for now, we will come back to the mathematics student's view later. The usefulness of linear algebra has less to do with which view you take, and more with the ability to switch between those views.
+It gives someone who is number crunching a way to visualize what he is doing visually, and it gives the visual creator a way to represent what she is trying to do mathematically.  Win - Win.
+
+
+---
+pub_date: 2019-09-08
