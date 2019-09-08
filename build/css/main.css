@@ -29,8 +29,8 @@ body {
     background-color: var(--color-black);
     color: var(--color-cream);
     display: flex;
-    position: absolute;
-    bottom: 0;
+    position: static;
+    top: 0;
     left: 0;
     right: 0;
     z-index: 99;
@@ -81,14 +81,6 @@ a, a:link, a:visited {
 
     
 @media (min-width: 425px) {
-    .tab-button-bar {
-        position: static;
-        bottom: auto;
-        top: 0;
-        right: -1px;
-        left: -1px;
-    }
-        
     #heading {
         font-size: 2em;
         width: 75%;
