@@ -59,6 +59,7 @@
 <p>Table of contents:</p>
 <ol>
 <li><a href="../../wiki/notes-from-3blue1browns-essense-of-linear-algebra-series/#vectors-what-even-are-they?">Vectors, what even are they?</a></li>
+<li><a href="../../wiki/notes-from-3blue1browns-essense-of-linear-algebra-series/#linear-combinations-span-and-basis-vectors">Linear combinations, span and basis vectors</a></li>
 </ol>
 <h1 id="vectors-what-even-are-they?">Vectors, what even are they?</h1><blockquote><p>"The introduction of numbers as coordinates is an act of violence"  -Hermann Weyl</p>
 </blockquote>
@@ -77,6 +78,23 @@ If you multiply it by a negative number, the same applies except you also switch
 Numerically, you multiply each of the instructions in the list by that scalar.</p>
 <p>Even though we will stick with the combination of the computer science and physics student perspectives for now, we will come back to the mathematics student's view later. The usefulness of linear algebra has less to do with which view you take, and more with the ability to switch between those views.
 It gives someone who is number crunching a way to visualize what he is doing visually, and it gives the visual creator a way to represent what she is trying to do mathematically.  Win - Win.</p>
+<h1 id="linear-combinations-span-and-basis-vectors">Linear combinations, span and basis vectors</h1><blockquote><p>"Mathematics requires a small dose, not of genius, but of an imaginative freedom which, in larger a larger dose, would be insanity." - Angus K. Rodgers</p>
+</blockquote>
+<p>In the standard x-y coordinate system, there are two important vectors, the basis vectors:</p>
+<ul>
+<li><code>i</code> the vector that points in x direction with length of 1</li>
+<li><code>j</code> the vector that points in the y direction with a length of 1 </li>
+</ul>
+<p>So we can think of the vectors as a list of scalars that scale the basis vectors.  Or as the sum of the scaled basis vectors. Or as a <em>linear combination</em> of the basis vectors.</p>
+<ul>
+<li>This means that a vector will "look" different depending on what basis vectors it is scaling. </li>
+<li>This also means the choice of basis vectors is arbitrary and we could chose other ones, which would give us a different coordinate system.</li>
+</ul>
+<p>The set of all possible vectors you can reach with a linear combination of a pair of vectors is called the <em>span</em> of those two vectors.</p>
+<p>We say that the <em>span</em> of the basis vectors is all of two dimensional space, because we can reach all of two dimensional space by applying different linear combinations to the basis vectors.<br>
+The span of almost every pair of vectors will also be all of two dimensional space unless the vectors are on the same line in which case the span is that line. Remember, a linear combination is a sum of two scaled vectors and scaling stretches or squishes vectors.</p>
+<p>We say a set of vectors is <em>linearly dependent</em> when the span does not change if you remove one of them. Said in another way, one of those vectors is not adding any new reachable vectors to the the span. Said yet another way, one of the vectors can be expressed as a linear combination of the others, since it is already in the span of the others.</p>
+<p>A set of vectors is <em>linearly independent</em> when you can't remove any of them without also reducing the span. Each vector introduces some new reachable vectors to the span.</p>
 
     </section>
 
