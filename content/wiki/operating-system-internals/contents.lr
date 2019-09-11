@@ -30,6 +30,7 @@ To change that, I am following along with the free [Operating Systems: Three Eas
     1. [Thread locking](#thread-locking)
     1. [Concurrent data structures](#concurrent-data-structures)
     1. [Condition variables](#condition-variables)
+    1. [Semaphores](#semaphores)
 1. [Persistence](#persistence)
 
 
@@ -773,3 +774,22 @@ Getting such programs right in the C language (which is what the book uses) is q
 I think I am finally convinced that I need to look elsewhere than C for a language to learn for "low-level" stuff. 
 
 _End tangent_
+
+## Semaphores
+
+Semaphores are yet another synchronization construct. It is pretty similar to the conditional variable:
+- You have two methods `wait()` and `post()`
+- The semaphore wraps a counter of sorts and you set its initial value when you initialize the structure.
+- The call to `wait()` decrements the counter and moves on, unless the value is negative in which case it puts the thread to sleep.
+- The call to `post()` increments the counter and then if there is a thread to be woken, wakes them up.
+
+The Good:  
+Personally, i think semaphores are the most useful of the bunch. Partly because that is the only construct I have actually used. In my case, I found out you could use it very easily to throttle the number of threads concurrently issuing web requests to a server. Made my life very easy.
+
+The OK:  
+It might be tempting to want to say that semaphores are a generalization of locks and condition variables, but that kind of thinking is dangerous. Indeed, implementing condition variables with semaphores has proven to be extremely tricky and error prone to the point that it is usually never worth it if you can avoid it.
+
+The Bad:  
+Validating the correctness of an implementation that makes use of locks, condition variables, or semaphores is rough. Following along with the book I generally can find the obvious problem in the naive solutions pretty easily. Anything past that would require me spending a few hours, if not days looking at and thinking about the code. And even with that, you might still miss some. I just don't think it's worth it anymore. It does not seem responsible to build any critical systems in languages whose only solution to managing concurrency is these three constructs. Rust and Erlang are looking more appealing.
+
+

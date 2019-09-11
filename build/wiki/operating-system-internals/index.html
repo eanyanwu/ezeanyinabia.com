@@ -86,6 +86,7 @@ To change that, I am following along with the free <a href="http://pages.cs.wisc
 <li><a href="../../wiki/operating-system-internals/#thread-locking">Thread locking</a></li>
 <li><a href="../../wiki/operating-system-internals/#concurrent-data-structures">Concurrent data structures</a></li>
 <li><a href="../../wiki/operating-system-internals/#condition-variables">Condition variables</a></li>
+<li><a href="../../wiki/operating-system-internals/#semaphores">Semaphores</a></li>
 </ol>
 </li>
 <li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a></li>
@@ -628,6 +629,19 @@ If this wasn't the case, we could easily fall into situations when the a parent 
 <p>Getting such programs right in the C language (which is what the book uses) is quite annoying though. First, there is no easy way to test if the code is correct because the error conditions in these programs depend on the order in which threads run rather than on the code the threads are executing.  Second, finding these edge cases is a purely manual process; one needs to imagine up different scheduler behaviors and how that might affect thread execution. For non trivial programs, it is likely you will miss at least one such behavior. Thirdly, if you manage to figure out all the edge cases, your code will be a monster because of the sum of all the tweaks required to get things just right.
 I think I am finally convinced that I need to look elsewhere than C for a language to learn for "low-level" stuff.</p>
 <p><em>End tangent</em></p>
+<h2 id="semaphores">Semaphores</h2><p>Semaphores are yet another synchronization construct. It is pretty similar to the conditional variable:</p>
+<ul>
+<li>You have two methods <code>wait()</code> and <code>post()</code></li>
+<li>The semaphore wraps a counter of sorts and you set its initial value when you initialize the structure.</li>
+<li>The call to <code>wait()</code> decrements the counter and moves on, unless the value is negative in which case it puts the thread to sleep.</li>
+<li>The call to <code>post()</code> increments the counter and then if there is a thread to be woken, wakes them up.</li>
+</ul>
+<p>The Good:<br>
+Personally, i think semaphores are the most useful of the bunch. Partly because that is the only construct I have actually used. In my case, I found out you could use it very easily to throttle the number of threads concurrently issuing web requests to a server. Made my life very easy.</p>
+<p>The OK:<br>
+It might be tempting to want to say that semaphores are a generalization of locks and condition variables, but that kind of thinking is dangerous. Indeed, implementing condition variables with semaphores has proven to be extremely tricky and error prone to the point that it is usually never worth it if you can avoid it.</p>
+<p>The Bad:<br>
+Validating the correctness of an implementation that makes use of locks, condition variables, or semaphores is rough. Following along with the book I generally can find the obvious problem in the naive solutions pretty easily. Anything past that would require me spending a few hours, if not days looking at and thinking about the code. And even with that, you might still miss some. I just don't think it's worth it anymore. It does not seem responsible to build any critical systems in languages whose only solution to managing concurrency is these three constructs. Rust and Erlang are looking more appealing.</p>
 
     </section>
 
