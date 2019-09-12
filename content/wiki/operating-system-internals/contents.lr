@@ -2,10 +2,14 @@ title: Operating System Internals
 ---
 pub_date: 2019-07-27
 ---
-body:
+excerpt:
+
 
 I spend a lot of time using computers, but I am still scared of what goes on beneath the covers.  
 To change that, I am following along with the free [Operating Systems: Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP) book offered by Computer Science professors at the University of Wisconsin-Madison
+---
+body:
+
 
 # Contents
 1. [Introduction](#introduction)
