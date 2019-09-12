@@ -55,11 +55,13 @@
             
     <section id="post" class="f5 f4-ns w-90 margin-auto">
         <h1>Notes from 3blue1brown&#39;s Essense of linear algebra series</h1>
-        <p>The <a href="https://www.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw/featured">3blue1brown</a> channel is a treasure trove of great teaching. I stumbled upon his playlist on linear algebra a few months ago while dabbling in graphics. It is hard to understate how helpful it was. In a few videos he is able to effectively answer the question "why linear algebra?" and give the watcher a really good intuition for thinking about the subject. I'm considering going back into a computer graphics stint, so I'm re-watching the series and taking notes this time.</p>
-<p>Table of contents:</p>
+        <p>The <a href="https://www.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw/featured">3blue1brown</a> channel is a treasure trove of great teaching. I stumbled upon his playlist on linear algebra a few months ago while dabbling in graphics. It is hard to overstate how helpful it was. In a few videos he is able to effectively answer the question "why linear algebra?" and give the watcher a really good intuition for thinking about the subject. I'm considering going back into a computer graphics stint, so I'm re-watching the series and taking notes this time.</p>
+
+        <p>Table of contents:</p>
 <ol>
 <li><a href="../../wiki/notes-from-3blue1browns-essense-of-linear-algebra-series/#vectors-what-even-are-they?">Vectors, what even are they?</a></li>
 <li><a href="../../wiki/notes-from-3blue1browns-essense-of-linear-algebra-series/#linear-combinations-span-and-basis-vectors">Linear combinations, span and basis vectors</a></li>
+<li><a href="../../wiki/notes-from-3blue1browns-essense-of-linear-algebra-series/#linear-transformations-and-matrices">Linear transformations and matrices</a></li>
 </ol>
 <h1 id="vectors-what-even-are-they?">Vectors, what even are they?</h1><blockquote><p>"The introduction of numbers as coordinates is an act of violence"  -Hermann Weyl</p>
 </blockquote>
@@ -95,6 +97,15 @@ It gives someone who is number crunching a way to visualize what he is doing vis
 The span of almost every pair of vectors will also be all of two dimensional space unless the vectors are on the same line in which case the span is that line. Remember, a linear combination is a sum of two scaled vectors and scaling stretches or squishes vectors.</p>
 <p>We say a set of vectors is <em>linearly dependent</em> when the span does not change if you remove one of them. Said in another way, one of those vectors is not adding any new reachable vectors to the the span. Said yet another way, one of the vectors can be expressed as a linear combination of the others, since it is already in the span of the others.</p>
 <p>A set of vectors is <em>linearly independent</em> when you can't remove any of them without also reducing the span. Each vector introduces some new reachable vectors to the span.</p>
+<h1 id="linear-transformations-and-matrices">Linear transformations and matrices</h1><blockquote><p>"Whos the monster that taught me matrices but forgot to tell me about their origin and beauty" - Alex Sere, Youtube Commenter.</p>
+</blockquote>
+<p>Linear transformations are a way to move around space in a way that keeps the grid lines parallel and equally spaced, keeping the origin fixed. These transformations can be described using only the coordinates of where the basis vectors end up after the transformation.<br>
+Matrices give us a way to represent these transformations by having the matrix columns represent the coordinates where the basis vectors end up.</p>
+<p>This means:</p>
+<ul>
+<li>A linear transformation is completely described by the final position of the basis vectors.</li>
+<li>Given a matrix with the final position of the basis vectors, <em>you can find where any other vector ended up</em> because like we said earlier,vectors can be thought of as the sum of scaled basis vectors. The rows in the vectors represent the scalars by which the basis vectors are scaled. </li>
+</ul>
 
     </section>
 
