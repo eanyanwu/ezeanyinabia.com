@@ -89,6 +89,7 @@ To change that, I am following along with the free <a href="http://pages.cs.wisc
 <li><a href="../../wiki/operating-system-internals/#condition-variables">Condition variables</a></li>
 <li><a href="../../wiki/operating-system-internals/#semaphores">Semaphores</a></li>
 <li><a href="../../wiki/operating-system-internals/#concurrency-bugs">Concurrency bugs</a></li>
+<li><a href="../../wiki/operating-system-internals/#event-based-concurrency">Event based concurrency</a></li>
 </ol>
 </li>
 <li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a></li>
@@ -647,6 +648,9 @@ Validating the correctness of an implementation that makes use of locks, conditi
 <h2 id="concurrency-bugs">Concurrency bugs</h2><p>This chapter is more of a summary of a <a href="https://www.cs.columbia.edu/~junfeng/09fa-e6998/papers/concurrency-bugs.pdf">study on real-world concurrency bugs</a>.<br>
 I read the paper, and it is mostly what you would expect. Most of these bugs happen because we cannot reason about concurrent programs in a fool-proof way. The paper classifies the bugs and their fixes into various categories (I would argue it does so arbitrarily, but what do I know? I don't have a Phd).<br>
 No notes will be taken about this section because I'm lazy and have no real interest in remembering these categories. I <em>will</em> note that this paper only re-enforces my deep skepticism about sharing memory among threads. There has to be a better way.</p>
+<h2 id="event-based-concurrency">Event based concurrency</h2><p>To finish up the section on concurrency, the authors introduced another alternative to using threads: the event loop. 
+Using an event loop will supposedly sidestep all the headaches of thread synchronization by doing all the work on one thread. The thread in question will be in a continuous loop where it (a) listens for "events" then (b) calls the appropriate event handlers for said event. This is usually called the <em>event loop</em>.</p>
+<p>So is this a viable alternative to thread-based concurrency? eh, I would not be so quick to jump aboard. The obvious downside is that an event handler cannot be a  long-running operation  because it will halt the world. So not the best choice for programs that spend a long time doing "stuff". However, it is a good fit for programs that can be written as "reactions" to outside events. A user-interface is one such example. It needs only do anything when the user initiates an action.</p>
 
     </section>
 
