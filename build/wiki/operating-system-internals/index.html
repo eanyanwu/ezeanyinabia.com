@@ -92,7 +92,10 @@ To change that, I am following along with the free <a href="http://pages.cs.wisc
 <li><a href="../../wiki/operating-system-internals/#event-based-concurrency">Event based concurrency</a></li>
 </ol>
 </li>
-<li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a></li>
+<li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a><ol>
+<li><a href="../../wiki/operating-system-internals/#io-devices">IO devices</a></li>
+</ol>
+</li>
 </ol>
 <h1 id="introduction">Introduction</h1><p>When we say a program is "running" we mean that a program is doing the following over and over again:</p>
 <ul>
@@ -651,6 +654,24 @@ No notes will be taken about this section because I'm lazy and have no real inte
 <h2 id="event-based-concurrency">Event based concurrency</h2><p>To finish up the section on concurrency, the authors introduced another alternative to using threads: the event loop. 
 Using an event loop will supposedly sidestep all the headaches of thread synchronization by doing all the work on one thread. The thread in question will be in a continuous loop where it (a) listens for "events" then (b) calls the appropriate event handlers for said event. This is usually called the <em>event loop</em>.</p>
 <p>So is this a viable alternative to thread-based concurrency? eh, I would not be so quick to jump aboard. The obvious downside is that an event handler cannot be a  long-running operation  because it will halt the world. So not the best choice for programs that spend a long time doing "stuff". However, it is a good fit for programs that can be written as "reactions" to outside events. A user-interface is one such example. It needs only do anything when the user initiates an action.</p>
+<h1 id="persistence">Persistence</h1><h2 id="io-devices">IO devices</h2><p>A computer without a way to accept input will give the same results each time. A computer with no way to show output is even more useless. So clearly, input/output devices (or I/O devices) are important components to making computers useful to us.</p>
+<p>These I/O devices are connected to the CPU via wires, or as people seem to call them, buses. Devices that require high performance are on faster buses, closer to the CPU. Lower performance components are further away and use slower buses. I believe performance here refers to transfer speed along the bus.<br>
+We have a bus hierarchy for the same reason we have a memory hierarchy. Among other things, it is expensive to make fast components.<br>
+It's was nice to learn that all those obscure names I have heard like eSATA, PCI and USB all refer to different types of buses.</p>
+<p>Not unlike software, a hardware device will present an interface through which other components may communicate with it. This interface usually consists  of status, command and data registers. If the CPU were to interact with such a device, it would poll the status register till the device is ready, place some data in the data register then some command in the command register and finally poll again until the device finishes its work.</p>
+<p>This way of interacting with i/o devices is simple, but has some inefficiencies:</p>
+<ul>
+<li>Polling: CPU polling for long i/o operations is wasteful. The thread that is polling is not doing other useful work. </li>
+<li>Transferring data from memory to the device data register: Transferring data from memory to the I/O device registers takes some CPU cycles. Cycles that could be used for other things.</li>
+</ul>
+<p>Thankfully, these problems have simple solutions. The first problem is fixed by having the i/o devices send interrupts to the CPU whenever they are done with work. That way, the CPU does not have to wait around for them to finish. 
+The second problem is solved using <em>Direct Memory Access</em>. This is a hardware component that lets the CPU give a specific I/O device direct access to a portion of memory. This frees up the CPU from copying data around. It can just let the I/O device read the data it needs directly from memory while it goes about doing more useful computations.</p>
+<p>Two other things to note about I/O devices.</p>
+<ol>
+<li>There are two ways of interacting with them, using explicit I/O instructions, or using <em>memory-mapped I/O</em>. Explicit io instructions  mean that the CPU has instructions for fetching data from and loading data to a given device register. Memory-mapped I/O means that the i/o device registers are simply treated like normal registers, so you can use normal <em>load</em> and <em>store</em> instructions to read data from and write data to them.</li>
+<li>I/O device come in a variety of interfaces, even if they perform the same basic function. So how do we write OS code once and have it work for USBs, Hard Drives and SSDs? The answer is "Add Another Level Of Abstraction (TM)". This level of abstraction is <em>drivers</em>. I/O device drivers for a specific type of I/O device would expose the same interface to the OS, but take care of mapping that interface to whatever concrete device the driver is for. This is a blessing and a curse. A blessing because OS code beomes easier. A curse because this unified interface means we cannot be as efficient as we would like with certain devices. In some cases, we might not be able to take advantage of certain features a brand of hardware offers because it doesn't fit into the interface that the OS has for that type of device :/<br>
+Choose wisely.</li>
+</ol>
 
     </section>
 
