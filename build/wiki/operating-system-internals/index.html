@@ -94,6 +94,7 @@ To change that, I am following along with the free <a href="http://pages.cs.wisc
 </li>
 <li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a><ol>
 <li><a href="../../wiki/operating-system-internals/#io-devices">IO devices</a></li>
+<li><a href="../../wiki/operating-system-internals/#hard-disk-drives">Hard Disk Drives</a></li>
 </ol>
 </li>
 </ol>
@@ -672,6 +673,15 @@ The second problem is solved using <em>Direct Memory Access</em>. This is a hard
 <li>I/O device come in a variety of interfaces, even if they perform the same basic function. So how do we write OS code once and have it work for USBs, Hard Drives and SSDs? The answer is "Add Another Level Of Abstraction (TM)". This level of abstraction is <em>drivers</em>. I/O device drivers for a specific type of I/O device would expose the same interface to the OS, but take care of mapping that interface to whatever concrete device the driver is for. This is a blessing and a curse. A blessing because OS code beomes easier. A curse because this unified interface means we cannot be as efficient as we would like with certain devices. In some cases, we might not be able to take advantage of certain features a brand of hardware offers because it doesn't fit into the interface that the OS has for that type of device :/<br>
 Choose wisely.</li>
 </ol>
+<h2 id="hard-disk-drives">Hard Disk Drives</h2><p>Yet another chapter that taught me things I did not know and explained words I previously did not understand.</p>
+<p>I will attempt to summarize what I got out of the chapter in a series of bullet points:</p>
+<ul>
+<li>Hard Drive Interface: An array of <em>sectors</em>. A sector is (usually) a block of 512-bytes that can be written to atomically. </li>
+<li>Hard Drive "Geometry" (read, "what it's really like"): A stack of <em>platters</em>, each side of which is called a <em>surface</em>. A <em>spindle</em> spins the platters around at the advertised "RPM" (rotations-per-minute) of the drive. Data is encoded unto each surface in concentric circles called <em>tracks</em>. Each track is made of a series of sectors.  Data is written to a surface by inducing a magnetic charge. Data is read by sensing magnetic charges. The thing that does this inducing/sensing is called the <em>disk head</em> and it is attached to a <em>disk arm</em>. </li>
+<li>To get to a certain sector, the disk head has to (a) <em>seek</em> the correct track then (b) wait for the <em>rotation</em> of the platter to bring the correct sector under the disk head and lastly (c) transfer the data. As you can imagine, doing this correctly while servicing multiple read/writes a second is no easy feat. So perhaps it is not so surprising to hear that hard drives have schedulers to uh, <em>schedule</em> the order in which i/o requests are handled by the disk head. </li>
+<li>Everything else in the chapter is details that are nice to know exist, but i have no interest in actually knowing. A section about the various types of scheduling algorithms used, another about comparing two types of hard drives using I/O time as a metric, under two different workloads and yet another that had <em>integrals</em> (gasp). Excuse me, authors, but I didn't realize I was reading a calculus book. </li>
+</ul>
+<p>Hard drives are complex, and I'm glad they work. I'll leave figuring out the best way for them to work to people who make them for a living.</p>
 
     </section>
 

@@ -39,6 +39,7 @@ body:
     1. [Event based concurrency](#event-based-concurrency)
 1. [Persistence](#persistence)
     1. [IO devices](#io-devices)
+    1. [Hard Disk Drives](#hard-disk-drives)
 
 
 # Introduction
@@ -836,6 +837,18 @@ Two other things to note about I/O devices.
 1. There are two ways of interacting with them, using explicit I/O instructions, or using _memory-mapped I/O_. Explicit io instructions  mean that the CPU has instructions for fetching data from and loading data to a given device register. Memory-mapped I/O means that the i/o device registers are simply treated like normal registers, so you can use normal _load_ and _store_ instructions to read data from and write data to them.
 2.  I/O device come in a variety of interfaces, even if they perform the same basic function. So how do we write OS code once and have it work for USBs, Hard Drives and SSDs? The answer is "Add Another Level Of Abstraction (TM)". This level of abstraction is _drivers_. I/O device drivers for a specific type of I/O device would expose the same interface to the OS, but take care of mapping that interface to whatever concrete device the driver is for. This is a blessing and a curse. A blessing because OS code beomes easier. A curse because this unified interface means we cannot be as efficient as we would like with certain devices. In some cases, we might not be able to take advantage of certain features a brand of hardware offers because it doesn't fit into the interface that the OS has for that type of device :/  
 Choose wisely.
+
+## Hard Disk Drives
+
+Yet another chapter that taught me things I did not know and explained words I previously did not understand. 
+
+I will attempt to summarize what I got out of the chapter in a series of bullet points:  
+- Hard Drive Interface: An array of _sectors_. A sector is (usually) a block of 512-bytes that can be written to atomically. 
+- Hard Drive "Geometry" (read, "what it's really like"): A stack of _platters_, each side of which is called a _surface_. A _spindle_ spins the platters around at the advertised "RPM" (rotations-per-minute) of the drive. Data is encoded unto each surface in concentric circles called _tracks_. Each track is made of a series of sectors.  Data is written to a surface by inducing a magnetic charge. Data is read by sensing magnetic charges. The thing that does this inducing/sensing is called the _disk head_ and it is attached to a _disk arm_. 
+- To get to a certain sector, the disk head has to (a) _seek_ the correct track then (b) wait for the _rotation_ of the platter to bring the correct sector under the disk head and lastly (c) transfer the data. As you can imagine, doing this correctly while servicing multiple read/writes a second is no easy feat. So perhaps it is not so surprising to hear that hard drives have schedulers to uh, _schedule_ the order in which i/o requests are handled by the disk head. 
+- Everything else in the chapter is details that are nice to know exist, but i have no interest in actually knowing. A section about the various types of scheduling algorithms used, another about comparing two types of hard drives using I/O time as a metric, under two different workloads and yet another that had _integrals_ (gasp). Excuse me, authors, but I didn't realize I was reading a calculus book. 
+
+Hard drives are complex, and I'm glad they work. I'll leave figuring out the best way for them to work to people who make them for a living.
 
 
 
