@@ -95,6 +95,7 @@ To change that, I am following along with the free <a href="http://pages.cs.wisc
 <li><a href="../../wiki/operating-system-internals/#persistence">Persistence</a><ol>
 <li><a href="../../wiki/operating-system-internals/#io-devices">IO devices</a></li>
 <li><a href="../../wiki/operating-system-internals/#hard-disk-drives">Hard Disk Drives</a></li>
+<li><a href="../../wiki/operating-system-internals/#raid">RAID</a></li>
 </ol>
 </li>
 </ol>
@@ -682,6 +683,35 @@ Choose wisely.</li>
 <li>Everything else in the chapter is details that are nice to know exist, but i have no interest in actually knowing. A section about the various types of scheduling algorithms used, another about comparing two types of hard drives using I/O time as a metric, under two different workloads and yet another that had <em>integrals</em> (gasp). Excuse me, authors, but I didn't realize I was reading a calculus book. </li>
 </ul>
 <p>Hard drives are complex, and I'm glad they work. I'll leave figuring out the best way for them to work to people who make them for a living.</p>
+<h2 id="raid">RAID</h2><p>RAID stands for Redundant Array of Inexpensive Disks. It is a hardware technique for getting speed, capacity and reliability out of a hard drive. This is one of the few times in computer science that we've been presented with three options then told we can have all three.<br>
+One of the main reasons RAID caught on so quickly is "transparency". To the operating system, a RAID presents the same interface as a single hard drive.
+Is RAID magic? No. It's "just" complex.<br>
+RAID is basically a specialized computer system, a mini-computer of sorts that does exactly one thing.<br>
+At a basic level, RAID is exactly that, an array of disks on which data is stored. How this data is stored on the disk array depends on what <em>RAID level</em> you are using.</p>
+<p><strong>Before I go further, a tangent on workloads, metrics and measuring performance</strong><br>
+As you know, metrics are what you measure things by. But figuring out how something performs against a metric depends on the given workload. Workload simulations are needed to test things against metrics.</p>
+<p>Here the book offers two metrics: <em>single-request latency</em> and <em>steady-state throughput</em>. The authors also put forth simplifications of two types of workloads: <em>random i/o</em> and <em>sequential i/o</em>.</p>
+<ul>
+<li>Single Request Latency: How does the RAID perform when one request is issued against it? </li>
+<li>Steady-State Throughput: How does the RAID perform when servicing multiple requests at a time? </li>
+<li>Random I/O: The requests are for different, unrelated blocks.</li>
+<li>Sequential I/O: The requests are for long contiguous blocks. </li>
+</ul>
+<p>So to evaluate the performance of a certain RAID level you need to calculate the two metrics for each of the two workloads.</p>
+<p><em>That said, I'll simply outline the basics of the different RAID levels without commenting on how they perform. Look to the book for those details</em></p>
+<p><em>RAID-0: Striping</em><br>
+Consequent blocks are written across disks instead of on the same disk. So block 1 goes to disk 1, block 2 to disk 2, block 3 to disk 3, block 4 to disk 1 etc...
+Technically, this is not RAID because it isn't redundant, but that is neither here nor there.</p>
+<p><em>RAID-1: Mirroring</em><br>
+Very similar to striping except the data is duplicated. So block 1 goes to disk 1 AND disk 2, block 2 goes to disk 3 AND 4 etc...
+A mirrored system can tolerate 1 disk failure for certain, and up to N/2 disk failures depending on which disks fail (where N is the number of disks).
+Speed wise, the waters get murkier. It depends on your workload.</p>
+<p><em>RAID-4: Parity</em><br>
+This is actually pretty cool. You stripe as usual without duplication (as in RAID-0), but add an additional disk called a <em>parity disk</em>. 
+Each stripe maps to a parity block on the parity disk that contains the result of XORing all the blocks in that stripe. The result is that if you loose a disk, you can rebuild it by XORing the remaining blocks in a stripe with their corresponding parity block.</p>
+<p><em>RAID-5: Rotating Parity</em><br>
+An improvement over RAID-4 where the parity block rotates between disks instead of staying on one disk. It solves the performance bottleneck that occurs when writing data on RAID-4. In a RAID-4 system, with two requests to write, the parity disk becomes a bottleneck because both requests have to write to it.
+Rotating the parity block avoids that a bit, making it more likely to have completely parallel writes.</p>
 
     </section>
 
