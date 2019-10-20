@@ -38,5 +38,15 @@ body:
         <p class="answer pa1 measure">
             A: English <span class="i">(duh)</span>, French and Arabic.
         </p>
+
+        <p class="mt4 question pa1 b">Q: What do you want to be doing in the next 2 years?</p>
+        <p class="answer pa1 measure">
+            A: I am not yet sure 🙄
+        </p>
+
+        <p class="mt4 question pa1 b">Q: What are you currently learning about?</p>
+        <p class="answer pa1 measure">
+            A: Operating 👽 system 👽 internals 👽 
+        </p>
     </div>
 </section>
