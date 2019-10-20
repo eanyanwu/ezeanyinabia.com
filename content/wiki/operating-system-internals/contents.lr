@@ -41,6 +41,7 @@ body:
     1. [IO devices](#io-devices)
     1. [Hard Disk Drives](#hard-disk-drives)
     1. [RAID](#raid)
+    1. [Files and directories](#files-and-directories)
 
 
 # Introduction
@@ -889,4 +890,8 @@ _RAID-5: Rotating Parity_
 An improvement over RAID-4 where the parity block rotates between disks instead of staying on one disk. It solves the performance bottleneck that occurs when writing data on RAID-4. In a RAID-4 system, with two requests to write, the parity disk becomes a bottleneck because both requests have to write to it.
 Rotating the parity block avoids that a bit, making it more likely to have completely parallel writes.
 
+## Files and directories
 
+This was an "interlude" chapter for getting readers up to speed with the basics of UNIX files and directories. Since I already use Linux  as my personal computer, I already knew most of the material.   
+I will make mention of `strace` here. The authors introduced it as a tool to figure out what system calls a program makes. What makes it wonderful is that it is remarkably easy to use.  
+Here is an introduction to it: https://jvns.ca/strace-zine-unfolded.pdf
