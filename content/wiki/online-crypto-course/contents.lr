@@ -1,0 +1,137 @@
+title: Online Cryptography Course
+---
+pub_date: 2019-11-24
+---
+excerpt:
+
+Notes on the Online Cryptography Course from Stanford.  
+https://crypto.stanford.edu/~dabo/courses/OnlineCrypto/
+
+---
+body:
+
+# Table of Contents:
+1. [Week 1](#week-1)
+    1. [What is cryptography about](#what-is-cryptography-about)
+        1. [What is cryptography](#what-is-cryptography)
+        1. [History of cryptography](#history-of-cryptogrpahy)
+    1. [Crash course in discrete probability](#crash-course-in-discrete-probability)
+    1. [Stream ciphers](#stream-ciphers)
+        1. [Information theoretic security and the one-time pad](#information-theoretic-security-and-the-one-time-pad)
+
+
+
+
+
+# Week 1
+
+## What is cryptography about
+
+### What is cryptography
+
+_Cryptography_ is more than just encryption and decryption. Let's break it down a bit.
+
+At its core, cryptography is about (a) secure key establishment and (b) secure communications.
+
+_Secure key establishment_ amounts to Alice and bob agreeing on a shared key in such a way that an attacker has no idea what this key might be.  
+
+_Secure communications_ means that:  
+- Alice and Bob know that they are talking to each other  
+- Their messages are confidential -- no one can snoop in on what they are saying.  
+- Their messages cannot be tampered with
+
+
+With the core out of the way, we can do some more interesting stuff.
+
+- Digital signature: How can we make the equivalent of physical signatures in digital world while making sure an attacker cannot just copy and paste our signature elsewhere?
+- Anonymous communication: How can Alice interact with a server without the server knowying anything about who interacted with it?
+- Anonymous digital cash: How can we bring the anonymity of cash into the digital world while making sure people won't double spend?
+- Secure multi-party computation
+    - Consider the quote: "Anything that can be done with a trusted authority can also be done without"
+- Crypto Magic!
+    - Privately outsourcing computation
+    - Zero-knowledge proof-of-knowledge
+
+### History of cryptography
+
+Book suggestion:
+
+> The Code Breakers by David Kahn
+
+Some historical examples:
+- Caesar Cipher: A fixed substitution that applies to all plain-text messages. So really, there wasn't really a "key"
+- Substitution Cipher: 
+    - Using trial and error and a combination of single, double and triple letter frequencies, one can figure out what the key is.
+    - Cipher-Text only attack => Given only the cipher-text, an attacker can figure out what the plain text was. 
+- Vigener cipher:
+    - This is the same thing as the repeating XOR cipher I encountered in cryptopals, except instead of XOR-ing, you add the letters of the key and plain-text together modulo 26.
+    - Fortunately I have broken this before, so I was not phased by the bad explanation in the video.
+        - The key point to understand here is that we can break repeating-key encryption with key size `n` because every nth cipher text is encrypted with the same key. This means that we can split the cipher text into `n` parts and decrypt each part the same way you'd decrypt a Caesar cipher, then put all the keys back together.
+- Rotor Machines: Hebern, then the Enigma! 
+    - The youtube channels _Computerphile_ and _Numberphile_ have great explanations of how these worked.
+- Data Encryption Standard: The government was buying stuff from industry so they wanted to make sure industries were using good ciphers
+    - People at IBM came up with the original DES algorithm
+    - These days DES is insecure and should not be used
+    - Today, we have the "Advanced Encryption Standard"...lol what's next? the "Super Advanced Encryption Standard"?
+
+
+## Crash course in discrete probability
+
+Cryptographic constructs are _always_ accompanied by a proof of security
+
+Discrete probability is used as the language of such proofs.
+
+
+> The "discrete" part simply means that the number of possible things that can happen can be counted, it is not infinite.  
+This is in contrast to _continuous probability_ which is it's own beast that I hopefully will not be coming across in this course.
+
+The probability of something is _how likely it is for that something to occur_  
+That _something_ is referred to as an _Event_ and it is usually represented with a capital letter.
+
+So, read P(A) as _the probability of event A_
+
+For any event E, the following is always true   `0 <= P(E) <= 1`
+
+The following applies only to _independent events_ (will define later):
+- If an event A occurs when either event B or C occur, the probability of event A occurring is the sum of the probabilities of event B and C occurring.
+- If an event A occurs only when event B and C occur, the probability of event A occurring is the product of the probabilities of event B and C occurring.
+
+A "Random Variable" can be thought of as a _variable_ that holds the result of a _random experiment_ or _process_.  
+An example: Tossing a coin is a _random experiment_. So if I toss a coin and get HEADS, the result of that random process is HEADS. In the language of mathematics, this is equivalent to saying L = HEADS, where _L_ is the random variable holding the result of the coin toss process.
+
+Hmm events and random variables seem eerily similar. Yes they are. An event is actually a set of possible outcomes of a random variable!
+
+Aaand, that's enough math for now. Back to fun.
+
+## Stream Ciphers
+
+### Information theoretic security and the one-time pad
+
+So what is a _cipher_? A cipher is a set of two functions, encryption and decryption.  
+Encryption takes a key and some message and produces cipher-text  
+Decryption takes a key and cipher-text and produces a message  
+
+The encryption algorithm is often randomized (how is this possible?)
+The decryption algorithm is always deterministic
+
+What makes a _secure cipher_ ?
+
+The father of information Claude Shannon has our backs here thank God. Didn't realize I would be seeing his name in this corner of the world.
+
+In plain English:  
+"The cipher text should reveal no information about the plain text"
+
+In the language of probability:    
+For every pair of messages m0 and m1, the probability of encrypting m0 and getting a cipher text _c_ should be the same as the probability of encrypting m1 and getting that same cipher text _c_. 
+
+A cipher that meets this requirement is said to have _perfect secrecy_. It leaks no information. It tells no tales.
+
+- The One Time Pad (Vernam 1917)
+    - the key is a random bit string as long as the message
+    - encryption is just XORing the key with the message.
+    - decryption is just XORing the key and the cipher-text
+    - Given our above definition, the one-time pad has perfect secrecy.
+        - This is not the end of the story though. Perfect secrecy only guarantees that the cipher is not vulnerable to cipher text only attacks.
+
+
+
