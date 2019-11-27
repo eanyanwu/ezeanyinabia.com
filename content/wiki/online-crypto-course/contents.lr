@@ -20,6 +20,8 @@ body:
         1. [Information theoretic security and the one-time pad](#information-theoretic-security-and-the-one-time-pad)
         1. [Stream ciphers and pseudo random generators]
         (#stream-ciphers-and-pseudo-random-generators)
+        1. [Attacks]
+        (#attacks)
 
 
 
@@ -160,4 +162,21 @@ So we need to do two things:
 (b) Come up with another metric for a cipher's security that would affirm intuition that a stream cipher could indeed work.
 
 The answer to (a) was pretty straightforward. A PRG is predictable if given some number of bits _n_ of the PRG's output, an attacker can predict what bit _n + 1_ would be. 
+
+
+### Attacks
+
+
+- Two-time pad:
+    - The one-time pad has "one" in its name for good reason. An attacker who gets a hold of two messages that have been encrypted using the same one-time pad can recover both messages.
+    - This answer is pretty convincing that it is possible:
+    https://crypto.stackexchange.com/questions/59/taking-advantage-of-one-time-pad-key-reuse
+- Just avoid related keys
+    - The example is WEP:
+        - The initialization vector was reset every 16 million frames or so, as well as every power-reset. This meant that there was a lot of opportunity for an attacker to observe two-time pads!
+        - Worse, the PRG used did not do well when the keys were closely related (which they were, the IV was just being incremented). And there was an attack on it which allowed the attacker to retrieve the secret key after recording some number of messages.
+- Cipher-text Integrity
+    - One problem with the one-time pad is that it does not guarantee integrity, which as we said, should be a core part of cryptography. An attacker could intercept the cipher-text, mess with it and send it along.
+    - This could be especially bad when the attacker knows something about the content of the cipher-text (maybe they for sure know the format of the original message). They could easily inject or modify the message in a way that is confusing at best, harmful at worst.
+
 

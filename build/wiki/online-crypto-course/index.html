@@ -68,6 +68,10 @@
 <li><a href="../../wiki/online-crypto-course/#crash-course-in-discrete-probability">Crash course in discrete probability</a></li>
 <li><a href="../../wiki/online-crypto-course/#stream-ciphers">Stream ciphers</a><ol>
 <li><a href="../../wiki/online-crypto-course/#information-theoretic-security-and-the-one-time-pad">Information theoretic security and the one-time pad</a></li>
+<li>[Stream ciphers and pseudo random generators]
+(#stream-ciphers-and-pseudo-random-generators)</li>
+<li>[Attacks]
+(#attacks)</li>
 </ol>
 </li>
 </ol>
@@ -162,10 +166,48 @@ For every pair of messages m0 and m1, the probability of encrypting m0 and getti
 <li>the key is a random bit string as long as the message</li>
 <li>encryption is just XORing the key with the message.</li>
 <li>decryption is just XORing the key and the cipher-text</li>
+<li>Fast by not practical because you need to know the message length beforehand.</li>
 <li>Given our above definition, the one-time pad has perfect secrecy.<ul>
 <li>This is not the end of the story though. Perfect secrecy only guarantees that the cipher is not vulnerable to cipher text only attacks.</li>
 </ul>
 </li>
+</ul>
+</li>
+</ul>
+<p>Claude Shannon also proved (unfortunately) that a perfectly secure cipher must have keys that are at least as long as the messages.<br>
+The one-time-pad satisfies this, but this certainly throws a wrench in things.</p>
+<h3 id="stream-ciphers-and-pseudo-random-generators">Stream ciphers and pseudo random generators</h3><p>The stream cipher is an attempt to make a usable one-time-pad implementation.</p>
+<p>It works like so:</p>
+<ul>
+<li>The key is some reasonable n-bit number</li>
+<li>The encryption process takes that key and uses it as a seed for a Pseudo-random generator that produces a value as long as the message</li>
+<li>That value is then used to encrypt the message.</li>
+<li>The decryption process takes the key and uses it, yet again as a seed for the Pseudo-random generator. This would then produce the same value as long as the message, which we can use to decrypt the message</li>
+</ul>
+<p>Seems reasonable. The professor makes the point though that this stream cipher does not pass our <em>perfect secrecy</em> test. Which is technically true. The key is not the same size as the message.</p>
+<p>However, intuitively, this does seem like it should work given that the PRG (pseudo-random generator) is not predictable.</p>
+<p>So we need to do two things:
+(a) Define what makes a PRG predictable vs unpredictable
+(b) Come up with another metric for a cipher's security that would affirm intuition that a stream cipher could indeed work.</p>
+<p>The answer to (a) was pretty straightforward. A PRG is predictable if given some number of bits <em>n</em> of the PRG's output, an attacker can predict what bit <em>n + 1</em> would be.</p>
+<h3 id="attacks">Attacks</h3><ul>
+<li>Two-time pad:<ul>
+<li>The one-time pad has "one" in its name for good reason. An attacker who gets a hold of two messages that have been encrypted using the same one-time pad can recover both messages.</li>
+<li>This answer is pretty convincing that it is possible:
+<a href="https://crypto.stackexchange.com/questions/59/taking-advantage-of-one-time-pad-key-reuse">https://crypto.stackexchange.com/questions/59/taking-advantage-of-one-time-pad-key-reuse</a></li>
+</ul>
+</li>
+<li>Just avoid related keys<ul>
+<li>The example is WEP:<ul>
+<li>The initialization vector was reset every 16 million frames or so, as well as every power-reset. This meant that there was a lot of opportunity for an attacker to observe two-time pads!</li>
+<li>Worse, the PRG used did not do well when the keys were closely related (which they were, the IV was just being incremented). And there was an attack on it which allowed the attacker to retrieve the secret key after recording some number of messages.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Cipher-text Integrity<ul>
+<li>One problem with the one-time pad is that it does not guarantee integrity, which as we said, should be a core part of cryptography. An attacker could intercept the cipher-text, mess with it and send it along.</li>
+<li>This could be especially bad when the attacker knows something about the content of the cipher-text (maybe they for sure know the format of the original message). They could easily inject or modify the message in a way that is confusing at best, harmful at worst.</li>
 </ul>
 </li>
 </ul>
