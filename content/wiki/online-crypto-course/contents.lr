@@ -18,10 +18,9 @@ body:
     1. [Crash course in discrete probability](#crash-course-in-discrete-probability)
     1. [Stream ciphers](#stream-ciphers)
         1. [Information theoretic security and the one-time pad](#information-theoretic-security-and-the-one-time-pad)
-        1. [Stream ciphers and pseudo random generators]
-        (#stream-ciphers-and-pseudo-random-generators)
-        1. [Attacks]
-        (#attacks)
+        1. [Stream ciphers and pseudo random generators](#stream-ciphers-and-pseudo-random-generators)
+        1. [Attacks](#attacks)
+        1. [Real-world stream ciphers](#real-world-stream-ciphers)
 
 
 
@@ -178,5 +177,29 @@ The answer to (a) was pretty straightforward. A PRG is predictable if given some
 - Cipher-text Integrity
     - One problem with the one-time pad is that it does not guarantee integrity, which as we said, should be a core part of cryptography. An attacker could intercept the cipher-text, mess with it and send it along.
     - This could be especially bad when the attacker knows something about the content of the cipher-text (maybe they for sure know the format of the original message). They could easily inject or modify the message in a way that is confusing at best, harmful at worst.
+
+
+### Real world stream ciphers
+
+IMPLEMENT LFSR for fun?
+
+- _RC4_: Do not use this. However, this is still fairly widely used. Was used for WEP and is part of the reason the WEP wifi encryption is not secure.
+    - It's weak because of the bias of its output. PRGs should be random, but RC4 has some weird biases. 
+        - The probability of the first few bytes being 0 is 2/256. This means there is a higher probability that your first couple of bytes would not be encrypted at all(i.e 0 XOR anything doesn't change anything)
+            - If you must use RC4 disgard the first 256 bytes it outputs.
+        - The probability of seeing two 0 bytes in a row is higher than you would imagine in a completely random process. This bias appears after a few Gigs of the generator, but this pattern makes it easy to distinguish from others.
+
+- CSS (Content Scrambling System): Used to encrypt DVDs
+    - Based on a Linear Feedback Shift Register (supposed to be easy to implement in hardware). It uses two LSFRs as its PRG
+    - Weaknesses:
+        - Small key size that makes it easy to brute-force
+        - Format of movies are known, so in addition to the cipher text, the attacker might actually know what the initial plain text looks like.  
+        XOR that with the actual cipher and you get the initial segment of the PRG. Brute force in a smart way and you can work out the initial settings of the PRG (i.e. the key) and _Bob's your uncle_
+- eStream
+    - State of the art (for now). No significant attacks...for now. Seems to be unpredictable.
+    - Introduces another argument to the PRG called a nonce - a Number used Once
+    - It's actually a group of stream ciphers/PRGs that satisfy various metrics (e.g. being easy to implement on hardware vs software)
+    - One of such ciphers is called _Salsa20_
+
 
 
