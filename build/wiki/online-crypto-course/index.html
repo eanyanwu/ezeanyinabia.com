@@ -71,6 +71,10 @@
 <li><a href="../../wiki/online-crypto-course/#stream-ciphers-and-pseudo-random-generators">Stream ciphers and pseudo random generators</a></li>
 <li><a href="../../wiki/online-crypto-course/#attacks">Attacks</a></li>
 <li><a href="../../wiki/online-crypto-course/#real-world-stream-ciphers">Real-world stream ciphers</a></li>
+<li><a href="../../wiki/online-crypto-course/#what-is-a-secure-cipher">What is a secure cipher</a><ol>
+<li><a href="../../wiki/online-crypto-course/#prg-security-definition">PRG security definition</a></li>
+</ol>
+</li>
 </ol>
 </li>
 </ol>
@@ -243,6 +247,25 @@ XOR that with the actual cipher and you get the initial segment of the PRG. Brut
 </ul>
 </li>
 </ul>
+<h3 id="what-is-a-secure-cipher">What is a secure cipher</h3><h4 id="prg-security-definition">PRG security definition</h4><p>It was explained before that we cannot have a usable cipher that has perfect secrecy. PRGs seem like they could be a viable alternative, but we need a way to prove that they are (a) secure and (b) unpredictable.</p>
+<p>The prof. defines a <em>secure</em> PRG as one whose output is indistinguishable from random. The way I think of it is that a PRG that has a bias is prone to attacks that take advantage of that bias. So a random PRG is secure in that there is no bias.</p>
+<p>Additionally an <em>unpredictable</em> PRG is one where given a prefix of the output of the generator, it is impossible to predict the next bit of the output.</p>
+<p>Things get a bit abstract in this segment, which is not surprising I guess. Them cryptographers need to somehow find mathematical tools to prove that some program has certain characteristics.</p>
+<p>Here are some of the "mathematical tools" that were presented:</p>
+<ul>
+<li><em>Statistical test</em>: Some algorithm that takes some input and outputs "true" or "false" based on some heuristic. Pretty vague, yes.</li>
+<li><em>Advantage</em>: The difference in probability of a statistical test outputting "true" when given two different n-bit strings.</li>
+</ul>
+<p>We can create statistical tests that take the output of a PRG and output "true" or "false" based on some heuristic.</p>
+<p>We can then use the <em>Advantage</em> concept to get a numerical value that tells us how "close" our PRG is to the producing a truly random sequence according to the heuristic we chose.</p>
+<p>The professor then went and said this:</p>
+<blockquote><p>"A PRG is secure if the Advantage of the PRG compared to a truly random process is negligible for <em>every efficient</em> statistical test."</p>
+</blockquote>
+<p>In my opinion, this is a bit obvious, but very unhelpful. To "prove" this you will somehow have to prove that you posses ever efficient statistical test.</p>
+<p>The professor confirmed my hunch...in that it is not known if there are any provably secure PRGs (what was the point of formulating what a secure PRG is, if we can't use it <code>.___.</code>)</p>
+<p>The rest of the lecture was talking about how it has been proved that if a PRG is secure, then it is unpredictable as well as the other way around.</p>
+<p>The last part was defining the concept of two distributions being computationally indistinguishable. This is a parallel to the "secure PRG" definition, so I won't bother repeating it here because you can't really prove that you know "all efficient statistical tests".</p>
+<p>And saying you know "a lot of statistical tests" doesn't help either because the whole point of bringing math into this was to be more precise. There could well be a statistical test that your PRG fails that you don't know about, but an attacker knows about and can use to exploit the PRG, then boom. All that mathematics did you zero good.</p>
 
     </section>
 
